@@ -1,0 +1,142 @@
+{
+  "name": "Basic 4 Daily Reminder",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {}
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -128,
+        -48
+      ],
+      "id": "2a3f4b31-445c-4245-b0e3-65fa34bcf082",
+      "name": "Schedule Trigger"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "979244fb-446d-4c58-addd-3ae536ed230d",
+              "name": "Reminder",
+              "value": "=Reminder: Task | Submission by  {{ $json['Readable time'] }} {{ $json['Day of week'] }} {{ $json['Day of month'] }} {{ $json.Month }} {{ $json.Year }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        80,
+        -48
+      ],
+      "id": "9bfcbbe9-d158-4737-b517-f2da76d732a4",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "sendTo": "cadetmcj@gmail.com",
+        "subject": "High Priority Reminder!",
+        "emailType": "text",
+        "message": "={{ $json.Reminder }}",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        288,
+        -48
+      ],
+      "id": "5bcd6772-c211-4cca-8bfc-5523cc58c694",
+      "name": "Send a message",
+      "webhookId": "cff8edce-c419-4f5e-ae57-83090f94c849",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "V6AN7zfX2gzHgAfX",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "addLabels",
+        "messageId": "={{ $json.id }}",
+        "labelIds": [
+          "Label_6736066425242266894"
+        ]
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        560,
+        -32
+      ],
+      "id": "3a5eb66e-ae11-42d3-a3be-402a9b6da74e",
+      "name": "Add label to message",
+      "webhookId": "a5f29ada-94c5-4a33-aefd-711c1d9d58ed",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "V6AN7zfX2gzHgAfX",
+          "name": "Gmail account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Send a message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send a message": {
+      "main": [
+        [
+          {
+            "node": "Add label to message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "1fb7ebf8-9afd-463d-b73d-e2c8e996c679",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "4f89d7de24e1de12323093f1c418ab2473b349a2c60b70df4dece0b06dbbe028"
+  },
+  "id": "6llN9qRsoVXk2vD9",
+  "tags": []
+}
