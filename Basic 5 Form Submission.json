@@ -1,0 +1,266 @@
+{
+  "name": "Basic 5 Form Submission",
+  "nodes": [
+    {
+      "parameters": {
+        "formTitle": "Contact Form",
+        "formFields": {
+          "values": [
+            {
+              "fieldLabel": "Name",
+              "placeholder": "Enter your Name",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Email",
+              "placeholder": "Enter your Email",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Message",
+              "placeholder": "Type your Query",
+              "requiredField": true
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.formTrigger",
+      "typeVersion": 2.3,
+      "position": [
+        0,
+        0
+      ],
+      "id": "94009e0d-26f4-4964-b5f8-6545d8ec8908",
+      "name": "On form submission",
+      "webhookId": "d466a96a-048b-43f0-9c2d-d627c04eb35d"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "3e7011d2-815d-463d-8684-817962303c46",
+              "name": "Name",
+              "value": "={{ $json.Name }}",
+              "type": "string"
+            },
+            {
+              "id": "f3013ced-0442-4fe6-ab2b-d46eb991c0a3",
+              "name": "Email",
+              "value": "={{ $json.Email }}",
+              "type": "string"
+            },
+            {
+              "id": "1897a4a0-b928-408f-93f3-0047b70c81e0",
+              "name": "Message",
+              "value": "={{ $json.Message }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        208,
+        0
+      ],
+      "id": "bf0ceb99-4d65-40ab-95c6-48d5245d373f",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "chatId": "8411835820",
+        "text": "=New Form Submitted:\nName:    {{ $json.Name }}\nEmail:   {{ $json.Email }}\nMessage: {{ $json.Message }}\nI have also updated the Google Sheets....",
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        544,
+        0
+      ],
+      "id": "399bbca4-f487-4a43-b81a-9522e2259b12",
+      "name": "Send a text message",
+      "webhookId": "4ebd40fa-8ab6-4429-8439-638903aad479",
+      "credentials": {
+        "telegramApi": {
+          "id": "SXYvzox8TF6ApESA",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sendTo": "cadetmcj@gmail.com",
+        "subject": "hello",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        544,
+        160
+      ],
+      "id": "ea662492-2d41-49ab-9701-20ac7238f98d",
+      "name": "Send a message1",
+      "webhookId": "c9fc1eb8-9144-4d96-8155-a0885c9af8b6",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "V6AN7zfX2gzHgAfX",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1ndUZTPh12l1RllbB_jDDXfmZZ4g-k6vcEQ46QoxZBsI",
+          "mode": "list",
+          "cachedResultName": "Basic 5 Form Submisssion",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1ndUZTPh12l1RllbB_jDDXfmZZ4g-k6vcEQ46QoxZBsI/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1ndUZTPh12l1RllbB_jDDXfmZZ4g-k6vcEQ46QoxZBsI/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Name": "={{ $('Edit Fields').item.json.Name }}",
+            "Email": "={{ $('Edit Fields').item.json.Email }}",
+            "Message": "={{ $('Edit Fields').item.json.Message }}"
+          },
+          "matchingColumns": [
+            "Name"
+          ],
+          "schema": [
+            {
+              "id": "Name",
+              "displayName": "Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Email",
+              "displayName": "Email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Message",
+              "displayName": "Message",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "row_number",
+              "displayName": "row_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "readOnly": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        752,
+        0
+      ],
+      "id": "85fe3013-d917-4112-8c70-38ae313526b9",
+      "name": "Append row in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "4AXTfOYpNREw2pGD",
+          "name": "Demo"
+        }
+      }
+    }
+  ],
+  "pinData": {
+    "Edit Fields": [
+      {
+        "json": {
+          "Name": "Abdul Basit",
+          "Email": "abdulbasit.mcj.9046@gmail.com",
+          "Message": "Hey"
+        }
+      }
+    ]
+  },
+  "connections": {
+    "On form submission": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Send a text message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send a text message": {
+      "main": [
+        [
+          {
+            "node": "Append row in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "45405baf-c383-4a45-9750-707157c58327",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "4f89d7de24e1de12323093f1c418ab2473b349a2c60b70df4dece0b06dbbe028"
+  },
+  "id": "knl75WKuoaJjAlqA",
+  "tags": []
+}
