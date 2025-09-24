@@ -1,0 +1,130 @@
+{
+  "name": "Basic 3 WeatherBot",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {}
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        0,
+        0
+      ],
+      "id": "4221fc91-b9fd-451b-b047-c05a453186aa",
+      "name": "Schedule Trigger"
+    },
+    {
+      "parameters": {
+        "url": "https://api.open-meteo.com/v1/forecast?latitude=33.5973&longitude=73.0479&current_weather=true",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        208,
+        0
+      ],
+      "id": "c24c4b27-948d-4ab7-b27e-f365ba7d79e4",
+      "name": "HTTP Request"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "bd0c765d-b9f2-4535-b790-f7f394a1244c",
+              "name": "Message",
+              "value": "=Hello Good Morning: \nTemperature in Your Area is: {{ $json.current_weather.temperature }}{{ $json.current_weather_units.temperature }}\nWindSpeed in your Area is: {{ $json.current_weather.windspeed }}{{ $json.current_weather_units.windspeed }}\nTime: {{ $now.format('yyyy-MM-dd hh:mm') }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        416,
+        0
+      ],
+      "id": "f5311ed3-61ee-4ecd-9221-af496ec47ed2",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "chatId": "8411835820",
+        "text": "={{ $json.Message }}",
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        624,
+        0
+      ],
+      "id": "e0107fcf-fe1b-42db-9d1a-d228e12fff88",
+      "name": "Send a text message",
+      "webhookId": "298734e5-bdbb-4ee5-94ea-20c22f0bb4c0",
+      "credentials": {
+        "telegramApi": {
+          "id": "SXYvzox8TF6ApESA",
+          "name": "Telegram account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Send a text message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "5e2ae830-4698-4c68-95af-eba5216900f6",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "4f89d7de24e1de12323093f1c418ab2473b349a2c60b70df4dece0b06dbbe028"
+  },
+  "id": "rb30Q6my0Bz3Rasq",
+  "tags": []
+}
