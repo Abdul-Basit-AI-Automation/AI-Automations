@@ -1,0 +1,138 @@
+{
+  "name": "Basic 2 Telegram Daily Quote",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {}
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        0,
+        0
+      ],
+      "id": "31003091-eaaa-40eb-ba78-0d7eb38d71a0",
+      "name": "Schedule Trigger"
+    },
+    {
+      "parameters": {
+        "url": "https://api.quotable.io/random",
+        "options": {
+          "allowUnauthorizedCerts": true
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        208,
+        0
+      ],
+      "id": "9a7d7e54-284d-4a10-b9e2-30ba7b0ea074",
+      "name": "HTTP Request"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "45e0d811-a68f-4733-9424-e1e4cfdb9ad1",
+              "name": "Quote",
+              "value": "=Daily Quote: {{ $json.content }}",
+              "type": "string"
+            },
+            {
+              "id": "7a9c9c4f-cecd-454d-9fa6-f2ac63a8c756",
+              "name": "Author",
+              "value": "=Author: {{ $json.author }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        416,
+        0
+      ],
+      "id": "98ecfebd-0826-4c95-869a-241e05872baf",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "chatId": "8411835820",
+        "text": "={{ $json.Quote }}\n{{ $json.Author }}",
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        624,
+        0
+      ],
+      "id": "295ce11c-739d-4fc7-ac2d-70464cb2f9b7",
+      "name": "Send a text message",
+      "webhookId": "627aca1b-5449-40ae-a686-4f1f0ca512bf",
+      "credentials": {
+        "telegramApi": {
+          "id": "SXYvzox8TF6ApESA",
+          "name": "Telegram account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Send a text message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "2798b92c-c9a9-440e-9ff5-3ecf670bf7f1",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "4f89d7de24e1de12323093f1c418ab2473b349a2c60b70df4dece0b06dbbe028"
+  },
+  "id": "W5zfxrxOXs8DfTYh",
+  "tags": []
+}
