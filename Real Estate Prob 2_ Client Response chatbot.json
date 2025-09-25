@@ -1,0 +1,203 @@
+{
+  "name": "Real Estate Prob 2: Client Response chatbot",
+  "nodes": [
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        0,
+        0
+      ],
+      "id": "8c8a2592-ad4f-4322-a274-383c71a54d4e",
+      "name": "When chat message received",
+      "webhookId": "2dad7b94-8da0-469e-bbab-ecaa702e5003"
+    },
+    {
+      "parameters": {
+        "options": {
+          "systemMessage": "=##Overview\n\nYou are a real estate assistant. Answer client questions clearly and politely. \nIf they ask about property availability, answer from the database if possible. \nIf they want a visit, ask their preferred time.\n\n##Rule\nFirstly ask the user their \nName:\nEmail:\n\n\n##Tools\nyou have Real Estate Data....use this tool to give the user the output\n\n"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2.2,
+      "position": [
+        208,
+        0
+      ],
+      "id": "b235eca2-e525-46ff-b933-8fa62359c96a",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-4.1-mini"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        16,
+        384
+      ],
+      "id": "5bc57dd0-ca11-47f6-9e83-a112ed7a45bd",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "hVv8imszC1mzFNrt",
+          "name": "n8n free OpenAI API credits"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "contextWindowLength": 10
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.3,
+      "position": [
+        192,
+        400
+      ],
+      "id": "a5f8226b-96d8-4895-8cf6-c83980ec492c",
+      "name": "Simple Memory"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "18OXy7P1GGkDedveE2_fHGT95L78h6tqWTNPBa_5Fzkw",
+          "mode": "list",
+          "cachedResultName": "Real Estate Data",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/18OXy7P1GGkDedveE2_fHGT95L78h6tqWTNPBa_5Fzkw/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/18OXy7P1GGkDedveE2_fHGT95L78h6tqWTNPBa_5Fzkw/edit#gid=0"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheetsTool",
+      "typeVersion": 4.7,
+      "position": [
+        496,
+        384
+      ],
+      "id": "f2ed47b3-6917-4ee1-8def-747f51bc4220",
+      "name": "Real Estate Properties",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "4AXTfOYpNREw2pGD",
+          "name": "Demo"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "calendar": {
+          "__rl": true,
+          "mode": "list",
+          "value": "cadetmcj@gmail.com"
+        },
+        "end": "={{ $now }}",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.googleCalendarTool",
+      "typeVersion": 1.3,
+      "position": [
+        368,
+        416
+      ],
+      "id": "983370c5-61f0-4c57-858d-96598368d14e",
+      "name": "Create The Event",
+      "credentials": {
+        "googleCalendarOAuth2Api": {
+          "id": "awJwlLfKnOi7jmNV",
+          "name": "Google Calendar account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When chat message received": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Simple Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Real Estate Properties": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create The Event": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        []
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "2f172277-4265-4e9e-b338-be32f18f5e5a",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "4f89d7de24e1de12323093f1c418ab2473b349a2c60b70df4dece0b06dbbe028"
+  },
+  "id": "t2wRs3fAKdE8KfCr",
+  "tags": []
+}
