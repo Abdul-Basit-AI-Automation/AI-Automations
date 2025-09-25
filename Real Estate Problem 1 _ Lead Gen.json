@@ -1,0 +1,344 @@
+{
+  "name": "Real Estate Problem 1 : Lead Gen",
+  "nodes": [
+    {
+      "parameters": {
+        "formTitle": "Property Scraper",
+        "formDescription": "This will scrape your properties in some time...plz wait",
+        "formFields": {
+          "values": [
+            {
+              "fieldLabel": "Name of the City",
+              "placeholder": "City Name Only",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Properties to Scrape",
+              "fieldType": "number",
+              "placeholder": "Write how many properties you are looking for...i.e. 5",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "OnMarket/OffMarket",
+              "fieldType": "checkbox",
+              "fieldOptions": {
+                "values": [
+                  {
+                    "option": "OnMarket"
+                  },
+                  {
+                    "option": "OffMarket"
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.formTrigger",
+      "typeVersion": 2.3,
+      "position": [
+        -32,
+        0
+      ],
+      "id": "7960cdc8-5f86-402a-8ed0-236f2536ecc8",
+      "name": "On form submission",
+      "webhookId": "c65cd76a-f53c-45a5-90b0-c9b6d80e61c8"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json['Name of the City'] }}",
+        "hasOutputParser": true,
+        "options": {
+          "systemMessage": "=You are an assistant that builds Realtor.com search URLs.\n\nInput: { \"city\": \"Miami_FL\", \"status\": \"off-market\" }\n\nOutput: A valid Realtor.com URL including the correct filters.\nExample:\nhttps://www.realtor.com/realestateandhomes-search/Miami_FL/status-off-market\n\n##Rules\nyou will only give off market, if the input is on market then make a link for on market\n"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2.2,
+      "position": [
+        224,
+        0
+      ],
+      "id": "be6d2bf0-71d9-4d7d-97b6-ebc327f65907",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-4.1-mini"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        192,
+        176
+      ],
+      "id": "30a1f373-5030-460e-870b-628f6ff8d4ca",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "hVv8imszC1mzFNrt",
+          "name": "n8n free OpenAI API credits"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://api.apify.com/v2/acts/epctex~realtor-scraper/run-sync-get-dataset-items?",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n    \"endPage\": 5,\n    \"extendOutputFunction\": \"($) => { return {} }\",\n    \"includeFloorplans\": false,\n    \"maxItems\": {{ $('On form submission').item.json['Properties to Scrape'] }},\n    \"proxy\": {\n        \"useApifyProxy\": true\n    },\n    \"search\": \"\",\n    \"startUrls\": [\n        \"{{ $json.output }}\"\n    ]\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        576,
+        0
+      ],
+      "id": "fcc5e653-fca9-4900-9f0e-1403faf89dd1",
+      "name": "HTTP Request"
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "18OXy7P1GGkDedveE2_fHGT95L78h6tqWTNPBa_5Fzkw",
+          "mode": "list",
+          "cachedResultName": "Real Estate Date Scraped",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/18OXy7P1GGkDedveE2_fHGT95L78h6tqWTNPBa_5Fzkw/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/18OXy7P1GGkDedveE2_fHGT95L78h6tqWTNPBa_5Fzkw/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Property Name": "={{ $json.url }}",
+            "Status": "={{ $json.status }}",
+            "Sold On": "={{ $json.soldOn }}",
+            "Last Sold": "={{ $json.lastSoldPrice }}",
+            "List Price": "={{ $json.listPrice }}",
+            "Baths": "={{ $json.baths }}",
+            "Beds": "={{ $json.beds }}",
+            "Garage": "={{ $json.garage }}",
+            "Lot_sqft": "={{ $json.lot_sqft }}",
+            "Stories": "={{ $json.stories }}",
+            "Text from seller": "={{ $json.text }}",
+            "Built in": "={{ $json.year_built }}",
+            "Type": "={{ $json.type }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "Property Name",
+              "displayName": "Property Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Status",
+              "displayName": "Status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Sold On",
+              "displayName": "Sold On",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Last Sold",
+              "displayName": "Last Sold",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "List Price",
+              "displayName": "List Price",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Baths",
+              "displayName": "Baths",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Beds",
+              "displayName": "Beds",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Garage",
+              "displayName": "Garage",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Lot_sqft",
+              "displayName": "Lot_sqft",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Stories",
+              "displayName": "Stories",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Text from seller",
+              "displayName": "Text from seller",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Built in",
+              "displayName": "Built in",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Type",
+              "displayName": "Type",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        832,
+        0
+      ],
+      "id": "5e86c4ff-f30f-40ed-8155-5f4c74777231",
+      "name": "Append row in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "4AXTfOYpNREw2pGD",
+          "name": "Demo"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "On form submission": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "Append row in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "fe0e4122-275b-4f17-9b07-d2166b333efe",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "4f89d7de24e1de12323093f1c418ab2473b349a2c60b70df4dece0b06dbbe028"
+  },
+  "id": "k6ed69xL82UeNxqT",
+  "tags": []
+}
