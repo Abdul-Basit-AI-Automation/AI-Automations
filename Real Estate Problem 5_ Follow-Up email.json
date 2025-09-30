@@ -1,0 +1,1415 @@
+{
+  "name": "Real Estate Problem 5: Follow-Up email",
+  "nodes": [
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=these are the details from my database\nLead ID :{{ $json['Lead ID'] }}\nName :{{ $json.Name }}\nPhone Number: {{ $json['Phone Number'] }}\nEmail: {{ $json.Email }}\nLead Source:{{ $json['Lead Source'] }}\nStatus: {{ $json.Status }}\nLast Contacted: {{ $json['Last Contacted'] }}\nNext Follow-Up: {{ $json['Next Follow-Up'] }}\nNotes: {{ $json.Notes }}",
+        "hasOutputParser": true,
+        "options": {
+          "systemMessage": "=You are an AI assistant for a real estate agency. \nYour role is to generate polite, professional, and personalized follow-up emails for potential clients.\n\n### Input Fields\n- Name: {{ $json[\"Name\"] }}\n- Lead Status: {{ $json[\"Status\"] }}\n- Notes: {{ $json[\"Notes\"] }}\n- Last Contacted: {{ $json[\"Last Contacted\"] }}\n- Next Follow-Up Date: {{ $json[\"Next Follow-Up\"] }}\n- Agent Name: Chris\n\n### Requirements\n1. Always greet the client by their first name (e.g., \"Hi Sarah,\").\n2. Mention their interest or notes if provided (e.g., \"I remember you mentioned looking for a DHA house.\").\n3. Keep the tone warm, professional, and concise (no more than 150 words).\n4. Encourage a reply by asking an open-ended question (e.g., \"Would you like me to send you more options?\").\n5. Output strictly in the following JSON format:\n\n{\n  \"subject\": \"string\",\n  \"body\": \"string\"\n}\n\n### Examples\n\n  \"subject\": \"Following up on your DHA house search\",\n  \"body\": \"Hi Sarah,\\n\\nI hope you're doing well. When we last connected, you mentioned you were looking for a DHA house, and I wanted to follow up to see if you’re still actively searching. I’d be happy to share updated listings that fit your preferences and budget.\\n\\nWould you like me to send you some tailored options this week?\\n\\nLooking forward to your reply!\\n\\nBest regards,\\nAbdul Basit\\nReal Estate Consultant\\n📞 +92-XXX-XXXXXXX\"\n\n\n Sign off as Real Estate Agency\n\nP.S: This is the first email of the three email sequence so be mindful of keeping the things in order\n\n"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2.2,
+      "position": [
+        416,
+        -336
+      ],
+      "id": "432226d4-41bf-4405-b4d9-86b86202d3e7",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "jsonSchemaExample": "{\n  \"subject\": \"Following up on your property search\",\n  \"body\": \"Hi Sarah,\\n\\nI just wanted to check in regarding your interest in 3-bedroom apartments in Downtown. I have a few options within your budget that could be a great fit. Would you like me to share more details or set up a quick call?\\n\\nBest regards,\\nYour Real Estate Agent\"\n}\n"
+      },
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.3,
+      "position": [
+        560,
+        -192
+      ],
+      "id": "aec5f744-3926-45d0-9216-34c2a1591e80",
+      "name": "Structured Output Parser"
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {}
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -368,
+        16
+      ],
+      "id": "f88dab3b-9891-470c-bab1-f75ad173f14d",
+      "name": "Schedule Trigger"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "881049d5-d7aa-4a58-aa57-078db7e67543",
+              "leftValue": "={{ $json.Status }}",
+              "rightValue": "=Closed",
+              "operator": {
+                "type": "string",
+                "operation": "notEquals"
+              }
+            },
+            {
+              "id": "76fddf3b-8d38-45b9-b781-7479e354968f",
+              "leftValue": "={{ new Date($json[\"Next Follow-Up\"]).getTime() }}",
+              "rightValue": "={{ new Date().setHours(0,0,0,0) }}",
+              "operator": {
+                "type": "number",
+                "operation": "lt"
+              }
+            },
+            {
+              "id": "c1317666-a360-4cd7-83ef-49417a4cc207",
+              "leftValue": "={{ $json['Follow Up Count'] }}",
+              "rightValue": 4,
+              "operator": {
+                "type": "number",
+                "operation": "lte"
+              }
+            },
+            {
+              "id": "1f3ef2c2-f768-484d-9d1a-0369b8322d55",
+              "leftValue": "={{ $json.Status }}",
+              "rightValue": "Not Closed",
+              "operator": {
+                "type": "string",
+                "operation": "notEquals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "looseTypeValidation": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -32,
+        16
+      ],
+      "id": "d8e03e1a-eb1f-4157-b931-4e1229828614",
+      "name": "STATUS COLD"
+    },
+    {
+      "parameters": {
+        "operation": "appendOrUpdate",
+        "documentId": {
+          "__rl": true,
+          "value": "1HVpby3BDmRPnwh91Tv3WToqzlTXMC7rgZ0DvkzsjuC8",
+          "mode": "list",
+          "cachedResultName": "📊 Google Sheet: Real Estate CRM",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1HVpby3BDmRPnwh91Tv3WToqzlTXMC7rgZ0DvkzsjuC8/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1HVpby3BDmRPnwh91Tv3WToqzlTXMC7rgZ0DvkzsjuC8/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Lead ID": "={{ $('Get the Data from the File').item.json['Lead ID'] }}",
+            "Name": "={{ $('Get the Data from the File').item.json.Name }}",
+            "Phone Number": "={{ $('Get the Data from the File').item.json['Phone Number'] }}",
+            "Lead Source": "={{ $('Get the Data from the File').item.json['Lead Source'] }}",
+            "Email": "={{ $('Get the Data from the File').item.json.Email }}",
+            "Status": "={{ $('Get the Data from the File').item.json.Status }}",
+            "Last Contacted": "={{ $now.format('yyyy-MM-dd') }}",
+            "Next Follow-Up": "={{$now.plus(2, 'days').format('yyyy-MM-dd')}}",
+            "Notes": "={{ $('Get the Data from the File').item.json.Notes }}",
+            "Follow Up Count": "={{ $('Get the Data from the File').item.json['Follow Up Count']+1 }}",
+            "Replied": "No"
+          },
+          "matchingColumns": [
+            "Lead ID"
+          ],
+          "schema": [
+            {
+              "id": "Lead ID",
+              "displayName": "Lead ID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Name",
+              "displayName": "Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Phone Number",
+              "displayName": "Phone Number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Email",
+              "displayName": "Email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Lead Source",
+              "displayName": "Lead Source",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Status",
+              "displayName": "Status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Replied",
+              "displayName": "Replied",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Last Contacted",
+              "displayName": "Last Contacted",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Follow Up Count",
+              "displayName": "Follow Up Count",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Next Follow-Up",
+              "displayName": "Next Follow-Up",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Notes",
+              "displayName": "Notes",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        976,
+        16
+      ],
+      "id": "51c04e35-e81f-4094-93da-cacb4220c5ee",
+      "name": "Append or update row in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "4AXTfOYpNREw2pGD",
+          "name": "Demo"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "appendOrUpdate",
+        "documentId": {
+          "__rl": true,
+          "value": "1HVpby3BDmRPnwh91Tv3WToqzlTXMC7rgZ0DvkzsjuC8",
+          "mode": "list",
+          "cachedResultName": "📊 Google Sheet: Real Estate CRM",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1HVpby3BDmRPnwh91Tv3WToqzlTXMC7rgZ0DvkzsjuC8/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1HVpby3BDmRPnwh91Tv3WToqzlTXMC7rgZ0DvkzsjuC8/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Lead ID": "={{ $('Get the Data from the File').item.json['Lead ID'] }}",
+            "Name": "={{ $('Get the Data from the File').item.json.Name }}",
+            "Phone Number": "={{ $('Get the Data from the File').item.json['Phone Number'] }}",
+            "Lead Source": "={{ $('Get the Data from the File').item.json['Lead Source'] }}",
+            "Email": "={{ $('Get the Data from the File').item.json.Email }}",
+            "Status": "=Closed",
+            "Last Contacted": "={{ $now.format('yyyy-MM-dd') }}",
+            "Next Follow-Up": "No Need",
+            "Notes": "={{ $('Get the Data from the File').item.json.Notes }}",
+            "Follow Up Count": "={{ $('Get the Data from the File').item.json['Follow Up Count']+1 }}",
+            "Replied": "Yes"
+          },
+          "matchingColumns": [
+            "Lead ID"
+          ],
+          "schema": [
+            {
+              "id": "Lead ID",
+              "displayName": "Lead ID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Name",
+              "displayName": "Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Phone Number",
+              "displayName": "Phone Number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Email",
+              "displayName": "Email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Lead Source",
+              "displayName": "Lead Source",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Status",
+              "displayName": "Status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Replied",
+              "displayName": "Replied",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Last Contacted",
+              "displayName": "Last Contacted",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Follow Up Count",
+              "displayName": "Follow Up Count",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Next Follow-Up",
+              "displayName": "Next Follow-Up",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Notes",
+              "displayName": "Notes",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        1648,
+        -176
+      ],
+      "id": "7c26a7e5-3e25-4346-895c-0cf6eba49716",
+      "name": "Append or update row in sheet1",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "4AXTfOYpNREw2pGD",
+          "name": "Demo"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "dd8c1cbb-0c06-4b27-ab2d-a2e9a86ae114",
+              "leftValue": "={{ $json[\"id\"] }}",
+              "rightValue": "4",
+              "operator": {
+                "type": "string",
+                "operation": "exists",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "looseTypeValidation": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        1488,
+        16
+      ],
+      "id": "eb387064-2dbd-463f-a431-0c2ce9086507",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json['Follow Up Count'] }}",
+                    "rightValue": 0,
+                    "operator": {
+                      "type": "number",
+                      "operation": "equals"
+                    },
+                    "id": "eb25de04-4776-4ca7-b678-847d36c1a88c"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "0"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "ed20185f-f347-492e-8fe1-5dfad2f5d4c7",
+                    "leftValue": "={{ $json['Follow Up Count'] }}",
+                    "rightValue": 1,
+                    "operator": {
+                      "type": "number",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "1"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "64a8cb6f-eaa5-40d0-9991-aa22bda34d8e",
+                    "leftValue": "={{ $json['Follow Up Count'] }}",
+                    "rightValue": 2,
+                    "operator": {
+                      "type": "number",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "2"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "7b6b6190-2083-42f1-9289-2177a6845003",
+                    "leftValue": "={{ $json['Follow Up Count'] }}",
+                    "rightValue": 3,
+                    "operator": {
+                      "type": "number",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "3"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [
+        160,
+        0
+      ],
+      "id": "feedbdd2-c2e3-4e58-9791-46fe22e7afe0",
+      "name": "Switch"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=these are the details from my database\nLead ID :{{ $json['Lead ID'] }}\nName :{{ $json.Name }}\nPhone Number: {{ $json['Phone Number'] }}\nEmail: {{ $json.Email }}\nLead Source:{{ $json['Lead Source'] }}\nStatus: {{ $json.Status }}\nLast Contacted: {{ $json['Last Contacted'] }}\nNext Follow-Up: {{ $json['Next Follow-Up'] }}\nNotes: {{ $json.Notes }}",
+        "hasOutputParser": true,
+        "options": {
+          "systemMessage": "=You are an AI assistant for a real estate agency. \nYour role is to generate polite, professional, and personalized follow-up emails for potential clients.\n\n### Input Fields\n- Name: {{ $json[\"Name\"] }}\n- Lead Status: {{ $json[\"Status\"] }}\n- Notes: {{ $json[\"Notes\"] }}\n- Last Contacted: {{ $json[\"Last Contacted\"] }}\n- Next Follow-Up Date: {{ $json[\"Next Follow-Up\"] }}\n- Agent Name: Chris\n\n### Requirements\n1. Always greet the client by their first name (e.g., \"Hi Sarah,\").\n2. Mention their interest or notes if provided (e.g., \"I remember you mentioned looking for a DHA house.\").\n3. Keep the tone warm, professional, and concise (no more than 150 words).\n4. Encourage a reply by asking an open-ended question (e.g., \"Would you like me to send you more options?\").\n5. Output strictly in the following JSON format:\n\n{\n  \"subject\": \"string\",\n  \"body\": \"string\"\n}\n\n### Examples\n\n  \"subject\": \"Following up on your DHA house search\",\n  \"body\": \"Hi Sarah,\\n\\nI hope you're doing well. When we last connected, you mentioned you were looking for a DHA house, and I wanted to follow up to see if you’re still actively searching. I’d be happy to share updated listings that fit your preferences and budget.\\n\\nWould you like me to send you some tailored options this week?\\n\\nLooking forward to your reply!\\n\\nBest regards,\\nAbdul Basit\\nReal Estate Consultant\\n📞 +92-XXX-XXXXXXX\"\n\n\n Sign off as Real Estate Agency\n\nP.S: This is the Second email of the 4 email sequence so be mindful of keeping the things in order\n..and remind the person of the emails sent before\n"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2.2,
+      "position": [
+        400,
+        -64
+      ],
+      "id": "6d252bdc-83a8-4986-b390-90463e38ae5d",
+      "name": "AI Agent1"
+    },
+    {
+      "parameters": {
+        "jsonSchemaExample": "{\n  \"subject\": \"Following up on your property search\",\n  \"body\": \"Hi Sarah,\\n\\nI just wanted to check in regarding your interest in 3-bedroom apartments in Downtown. I have a few options within your budget that could be a great fit. Would you like me to share more details or set up a quick call?\\n\\nBest regards,\\nYour Real Estate Agent\"\n}\n"
+      },
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.3,
+      "position": [
+        544,
+        64
+      ],
+      "id": "0c83ae2e-717f-4245-986d-bafe6bde8592",
+      "name": "Structured Output Parser1"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=these are the details from my database\nLead ID :{{ $json['Lead ID'] }}\nName :{{ $json.Name }}\nPhone Number: {{ $json['Phone Number'] }}\nEmail: {{ $json.Email }}\nLead Source:{{ $json['Lead Source'] }}\nStatus: {{ $json.Status }}\nLast Contacted: {{ $json['Last Contacted'] }}\nNext Follow-Up: {{ $json['Next Follow-Up'] }}\nNotes: {{ $json.Notes }}",
+        "hasOutputParser": true,
+        "options": {
+          "systemMessage": "=You are an AI assistant for a real estate agency. \nYour role is to generate polite, professional, and personalized follow-up emails for potential clients.\n\n### Input Fields\n- Name: {{ $json[\"Name\"] }}\n- Lead Status: {{ $json[\"Status\"] }}\n- Notes: {{ $json[\"Notes\"] }}\n- Last Contacted: {{ $json[\"Last Contacted\"] }}\n- Next Follow-Up Date: {{ $json[\"Next Follow-Up\"] }}\n- Agent Name: Chris\n\n### Requirements\n1. Always greet the client by their first name (e.g., \"Hi Sarah,\").\n2. Mention their interest or notes if provided (e.g., \"I remember you mentioned looking for a DHA house.\").\n3. Keep the tone warm, professional, and concise (no more than 150 words).\n4. Encourage a reply by asking an open-ended question (e.g., \"Would you like me to send you more options?\").\n5. Output strictly in the following JSON format:\n\n{\n  \"subject\": \"string\",\n  \"body\": \"string\"\n}\n\n### Examples\n\n  \"subject\": \"Following up on your DHA house search\",\n  \"body\": \"Hi Sarah,\\n\\nI hope you're doing well. When we last connected, you mentioned you were looking for a DHA house, and I wanted to follow up to see if you’re still actively searching. I’d be happy to share updated listings that fit your preferences and budget.\\n\\nWould you like me to send you some tailored options this week?\\n\\nLooking forward to your reply!\\n\\nBest regards,\\nAbdul Basit\\nReal Estate Consultant\\n📞 +92-XXX-XXXXXXX\"\n\n\n Sign off as Real Estate Agency\n\nP.S: This is the 4 email of the 4 email sequence so be mindful of keeping the things in order\n..and remind the person of the emails sent before\n\n"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2.2,
+      "position": [
+        416,
+        192
+      ],
+      "id": "8303b2a8-6939-4809-aa47-d0f0f98f849a",
+      "name": "AI Agent2"
+    },
+    {
+      "parameters": {
+        "jsonSchemaExample": "{\n  \"subject\": \"Following up on your property search\",\n  \"body\": \"Hi Sarah,\\n\\nI just wanted to check in regarding your interest in 3-bedroom apartments in Downtown. I have a few options within your budget that could be a great fit. Would you like me to share more details or set up a quick call?\\n\\nBest regards,\\nYour Real Estate Agent\"\n}\n"
+      },
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.3,
+      "position": [
+        560,
+        320
+      ],
+      "id": "151136d8-bde8-4aa7-9c4f-9bcd358a65c5",
+      "name": "Structured Output Parser2"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=these are the details from my database\nLead ID :{{ $json['Lead ID'] }}\nName :{{ $json.Name }}\nPhone Number: {{ $json['Phone Number'] }}\nEmail: {{ $json.Email }}\nLead Source:{{ $json['Lead Source'] }}\nStatus: {{ $json.Status }}\nLast Contacted: {{ $json['Last Contacted'] }}\nNext Follow-Up: {{ $json['Next Follow-Up'] }}\nNotes: {{ $json.Notes }}",
+        "hasOutputParser": true,
+        "options": {
+          "systemMessage": "=You are an AI assistant for a real estate agency. \nYour role is to generate polite, professional, and personalized follow-up emails for potential clients.\n\n### Input Fields\n- Name: {{ $json[\"Name\"] }}\n- Lead Status: {{ $json[\"Status\"] }}\n- Notes: {{ $json[\"Notes\"] }}\n- Last Contacted: {{ $json[\"Last Contacted\"] }}\n- Next Follow-Up Date: {{ $json[\"Next Follow-Up\"] }}\n- Agent Name: Chris\n\n### Requirements\n1. Always greet the client by their first name (e.g., \"Hi Sarah,\").\n2. Mention their interest or notes if provided (e.g., \"I remember you mentioned looking for a DHA house.\").\n3. Keep the tone warm, professional, and concise (no more than 150 words).\n4. Encourage a reply by asking an open-ended question (e.g., \"Would you like me to send you more options?\").\n5. Output strictly in the following JSON format:\n\n{\n  \"subject\": \"string\",\n  \"body\": \"string\"\n}\n\n### Examples\n\n  \"subject\": \"Following up on your DHA house search\",\n  \"body\": \"Hi Sarah,\\n\\nI hope you're doing well. When we last connected, you mentioned you were looking for a DHA house, and I wanted to follow up to see if you’re still actively searching. I’d be happy to share updated listings that fit your preferences and budget.\\n\\nWould you like me to send you some tailored options this week?\\n\\nLooking forward to your reply!\\n\\nBest regards,\\nAbdul Basit\\nReal Estate Consultant\\n📞 +92-XXX-XXXXXXX\"\n\n\n Sign off as Real Estate Agency\n\nP.S: This is the 3rd email of the 4 email sequence so be mindful of keeping the things in order\n..and remind the person of the emails sent before\n\n"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2.2,
+      "position": [
+        400,
+        432
+      ],
+      "id": "605cb530-8228-4914-b592-0e412e504dda",
+      "name": "AI Agent3"
+    },
+    {
+      "parameters": {
+        "jsonSchemaExample": "{\n  \"subject\": \"Following up on your property search\",\n  \"body\": \"Hi Sarah,\\n\\nI just wanted to check in regarding your interest in 3-bedroom apartments in Downtown. I have a few options within your budget that could be a great fit. Would you like me to share more details or set up a quick call?\\n\\nBest regards,\\nYour Real Estate Agent\"\n}\n"
+      },
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.3,
+      "position": [
+        560,
+        560
+      ],
+      "id": "af1fa08c-3efe-4f6f-bbef-1eb86807a340",
+      "name": "Structured Output Parser3"
+    },
+    {
+      "parameters": {
+        "amount": 2
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        1328,
+        16
+      ],
+      "id": "5978cf2d-a174-4fda-870a-822a0de65064",
+      "name": "Wait",
+      "webhookId": "0232129b-1b80-42b4-849f-ef0cd82ed565"
+    },
+    {
+      "parameters": {
+        "operation": "getAll",
+        "limit": 5,
+        "filters": {
+          "q": "from:abdulbasit.mcj.9046@gmail.com ",
+          "readStatus": "unread",
+          "receivedAfter": "={{ $('Get the Data from the File').item.json['Last Contacted'] }}"
+        }
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        1184,
+        16
+      ],
+      "id": "ed832c26-952c-40b0-be10-d6858836f5df",
+      "name": "Get many messages",
+      "webhookId": "409ca919-d9d8-4390-967b-1f277f2339a9",
+      "alwaysOutputData": true,
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "V6AN7zfX2gzHgAfX",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sendTo": "abdulbasit.mcj.9046@gmail.com",
+        "subject": "={{ $('Get the Data from the File').item.json.Name }} has replied your follow-up messages...",
+        "message": "={{ $('Get many messages').item.json.id }}, This is the ID, or search by Email:{{ $('Get the Data from the File').item.json.Email }}",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        1872,
+        -176
+      ],
+      "id": "29a0edf9-ae3b-479e-9a70-afe6447c8727",
+      "name": "Send a message",
+      "webhookId": "33223bbb-1d6f-4f13-8c9a-42f73dc3bc7d",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "V6AN7zfX2gzHgAfX",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "d58533a5-8a79-488e-8c8b-36d8732743aa",
+              "leftValue": "={{ $('Append or update row in sheet').item.json['Follow Up Count'] }}",
+              "rightValue": 4,
+              "operator": {
+                "type": "number",
+                "operation": "gte"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "looseTypeValidation": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        1648,
+        192
+      ],
+      "id": "2ea9f765-0bb7-4f17-b42b-e744e3c84b9a",
+      "name": "If1"
+    },
+    {
+      "parameters": {
+        "sendTo": "abdulbasit.mcj.9046@gmail.com",
+        "subject": "={{ $('Get the Data from the File').item.json.Name }} didnot replied your follow-up messages...",
+        "emailType": "text",
+        "message": "={{ $('Get the Data from the File').item.json.Name }} unfortunately didnot replied, so i have updated the CRM with NOT CLOSED...and the last Email has been sent...",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        1856,
+        176
+      ],
+      "id": "872295ba-6860-49a6-93b4-ca9a6c0cc8e7",
+      "name": "Send a message1",
+      "webhookId": "33223bbb-1d6f-4f13-8c9a-42f73dc3bc7d",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "V6AN7zfX2gzHgAfX",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "appendOrUpdate",
+        "documentId": {
+          "__rl": true,
+          "value": "1HVpby3BDmRPnwh91Tv3WToqzlTXMC7rgZ0DvkzsjuC8",
+          "mode": "list",
+          "cachedResultName": "📊 Google Sheet: Real Estate CRM",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1HVpby3BDmRPnwh91Tv3WToqzlTXMC7rgZ0DvkzsjuC8/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1HVpby3BDmRPnwh91Tv3WToqzlTXMC7rgZ0DvkzsjuC8/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Lead ID": "={{ $('Get the Data from the File').item.json['Lead ID'] }}",
+            "Name": "={{ $('Get the Data from the File').item.json.Name }}",
+            "Phone Number": "={{ $('Get the Data from the File').item.json['Phone Number'] }}",
+            "Lead Source": "={{ $('Get the Data from the File').item.json['Lead Source'] }}",
+            "Email": "={{ $('Get the Data from the File').item.json.Email }}",
+            "Status": "=Not Closed",
+            "Last Contacted": "={{ $now.format('yyyy-MM-dd') }}",
+            "Next Follow-Up": "=No Need ",
+            "Notes": "={{ $('Get the Data from the File').item.json.Notes }}",
+            "Follow Up Count": "={{ $('Get the Data from the File').item.json['Follow Up Count']+1 }}",
+            "Replied": "No"
+          },
+          "matchingColumns": [
+            "Lead ID"
+          ],
+          "schema": [
+            {
+              "id": "Lead ID",
+              "displayName": "Lead ID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Name",
+              "displayName": "Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Phone Number",
+              "displayName": "Phone Number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Email",
+              "displayName": "Email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Lead Source",
+              "displayName": "Lead Source",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Status",
+              "displayName": "Status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Replied",
+              "displayName": "Replied",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Last Contacted",
+              "displayName": "Last Contacted",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Follow Up Count",
+              "displayName": "Follow Up Count",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Next Follow-Up",
+              "displayName": "Next Follow-Up",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Notes",
+              "displayName": "Notes",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        2016,
+        16
+      ],
+      "id": "c61973a4-53db-4071-a95f-d050787e1627",
+      "name": "Append or update row in sheet2",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "4AXTfOYpNREw2pGD",
+          "name": "Demo"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "## REAL ESTATE PROBLEM SOLVED\n",
+        "height": 1184,
+        "width": 2688
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -512,
+        -400
+      ],
+      "typeVersion": 1,
+      "id": "064ded00-6249-4708-9652-016a69b7745a",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1HVpby3BDmRPnwh91Tv3WToqzlTXMC7rgZ0DvkzsjuC8",
+          "mode": "list",
+          "cachedResultName": "📊 Google Sheet: Real Estate CRM",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1HVpby3BDmRPnwh91Tv3WToqzlTXMC7rgZ0DvkzsjuC8/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1HVpby3BDmRPnwh91Tv3WToqzlTXMC7rgZ0DvkzsjuC8/edit#gid=0"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        -192,
+        16
+      ],
+      "id": "59aa216b-1afb-4856-9281-79f4f4d563ee",
+      "name": "Get the Data from the File",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "4AXTfOYpNREw2pGD",
+          "name": "Demo"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "draft",
+        "subject": "={{ $json.output.subject }}",
+        "message": "={{ $json.output.body }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        784,
+        16
+      ],
+      "id": "c2f16664-a70f-4b73-994d-5d5d4d13018d",
+      "name": "Create a draft",
+      "webhookId": "bf3f7356-bdc2-4387-a774-1c5ce6707def",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "V6AN7zfX2gzHgAfX",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "model": "openai/gpt-oss-120b",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGroq",
+      "typeVersion": 1,
+      "position": [
+        400,
+        336
+      ],
+      "id": "31999734-ce5a-4e06-98ff-4366c3f99c2b",
+      "name": "Groq Chat Model",
+      "credentials": {
+        "groqApi": {
+          "id": "MSre7Cy6Zj0XO185",
+          "name": "Groq account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "model": "openai/gpt-oss-120b",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGroq",
+      "typeVersion": 1,
+      "position": [
+        384,
+        96
+      ],
+      "id": "95a8057b-3ebe-4ad3-9011-f768abb3f23d",
+      "name": "Groq Chat Model1",
+      "credentials": {
+        "groqApi": {
+          "id": "MSre7Cy6Zj0XO185",
+          "name": "Groq account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "model": "openai/gpt-oss-120b",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGroq",
+      "typeVersion": 1,
+      "position": [
+        416,
+        592
+      ],
+      "id": "93927d33-08cd-4811-bee6-167da29ac1ca",
+      "name": "Groq Chat Model2",
+      "credentials": {
+        "groqApi": {
+          "id": "MSre7Cy6Zj0XO185",
+          "name": "Groq account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "model": "openai/gpt-oss-120b",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGroq",
+      "typeVersion": 1,
+      "position": [
+        400,
+        -176
+      ],
+      "id": "1d036e4b-37fd-4ed6-8b76-6aebdfb541aa",
+      "name": "Groq Chat Model3",
+      "credentials": {
+        "groqApi": {
+          "id": "MSre7Cy6Zj0XO185",
+          "name": "Groq account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Create a draft",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Structured Output Parser": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "Get the Data from the File",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "STATUS COLD": {
+      "main": [
+        [
+          {
+            "node": "Switch",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Append or update row in sheet": {
+      "main": [
+        [
+          {
+            "node": "Get many messages",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Append or update row in sheet1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "If1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "AI Agent1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "AI Agent2",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "AI Agent3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Structured Output Parser1": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "AI Agent1",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Structured Output Parser2": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "AI Agent2",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Structured Output Parser3": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "AI Agent3",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent1": {
+      "main": [
+        [
+          {
+            "node": "Create a draft",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent3": {
+      "main": [
+        [
+          {
+            "node": "Create a draft",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent2": {
+      "main": [
+        [
+          {
+            "node": "Create a draft",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get many messages": {
+      "main": [
+        [
+          {
+            "node": "Wait",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Append or update row in sheet1": {
+      "main": [
+        [
+          {
+            "node": "Send a message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If1": {
+      "main": [
+        [
+          {
+            "node": "Send a message1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send a message1": {
+      "main": [
+        [
+          {
+            "node": "Append or update row in sheet2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get the Data from the File": {
+      "main": [
+        [
+          {
+            "node": "STATUS COLD",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create a draft": {
+      "main": [
+        [
+          {
+            "node": "Append or update row in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Groq Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent2",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Groq Chat Model1": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent1",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Groq Chat Model2": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent3",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Groq Chat Model3": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "1710b7ab-6350-461f-805c-e6056ff4610d",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "4f89d7de24e1de12323093f1c418ab2473b349a2c60b70df4dece0b06dbbe028"
+  },
+  "id": "6ERFra62WXs0pBco",
+  "tags": []
+}
