@@ -1,0 +1,1461 @@
+{
+  "name": "Real Estate Problems 4 : File Organizer",
+  "nodes": [
+    {
+      "parameters": {
+        "formTitle": "Upload the FIle",
+        "formFields": {
+          "values": [
+            {
+              "fieldLabel": "File Upload",
+              "fieldType": "file",
+              "acceptFileTypes": "Only pdf, doc, docx",
+              "requiredField": true
+            }
+          ]
+        },
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.formTrigger",
+      "typeVersion": 2.3,
+      "position": [
+        384,
+        0
+      ],
+      "id": "7d96c54e-3c21-4e6b-a5b0-357a2d0d02e2",
+      "name": "On form submission",
+      "webhookId": "b5742d21-3516-4241-818e-2c9d89090436"
+    },
+    {
+      "parameters": {
+        "jsCode": "// For runOnceForAllItems mode\nconst result = [];\nfor (const item of $input.all()) {\n  let extension = \"unknown\";\n  const binaryKeys = Object.keys(item.binary || {});\n  \n  if (binaryKeys.length > 0) {\n    const fileMeta = item.binary[binaryKeys[0]];\n    if (fileMeta && fileMeta.fileName) {\n      extension = fileMeta.fileName.split('.').pop().toLowerCase();\n    }\n  }\n\n  result.push({\n    json: { extension },   // use for Switch\n    binary: item.binary    // pass the file forward\n  });\n}\nreturn result;\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        720,
+        0
+      ],
+      "id": "db6ecbef-1d36-4a6b-8dcc-67ff2a669353",
+      "name": "Code in JavaScript"
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.extension }}",
+                    "rightValue": "pdf",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "9e1b8dc2-bf6b-4b0b-bc1e-c98207333105"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "pdf"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "1058cfa7-6353-4cd4-b2f2-bae94787cda5",
+                    "leftValue": "={{ $json.extension }}",
+                    "rightValue": "docx",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "docx"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "0dd676f2-dde7-4185-b9cb-78e6a4e93760",
+                    "leftValue": "={{ $json.extension }}",
+                    "rightValue": "doc",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "doc"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "f2a567c6-d1cf-4057-a964-8a2377126463",
+                    "leftValue": "={{ $json.extension }}",
+                    "rightValue": "xml",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "xml"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "2ab079e3-2d4b-45be-a937-6ea56c68bea5",
+                    "leftValue": "={{ $json.extension }}",
+                    "rightValue": "xlsx",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "xlsx"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "5ae25e2e-ab95-4240-b92e-8100f5f19ec1",
+                    "leftValue": "={{ $json.extension }}",
+                    "rightValue": "png",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "png"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "718e7cb1-8f94-487b-a3fb-c98799bb09ea",
+                    "leftValue": "={{ $json.extension }}",
+                    "rightValue": "jpeg",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "jpeg"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "3dc6d42a-2440-4bf1-9f1e-93d886d321a7",
+                    "leftValue": "={{ $json.extension }}",
+                    "rightValue": "jpg",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "jpg"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [
+        1008,
+        -80
+      ],
+      "id": "f43be26f-ccf3-4881-bea5-10bbe61244d0",
+      "name": "Switch"
+    },
+    {
+      "parameters": {
+        "operation": "xml",
+        "binaryPropertyName": "Upload_File",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.extractFromFile",
+      "typeVersion": 1,
+      "position": [
+        1584,
+        64
+      ],
+      "id": "1dc1fb3c-478e-4f07-b64d-55c69423f25f",
+      "name": "Extract from XML"
+    },
+    {
+      "parameters": {
+        "operation": "xlsx",
+        "binaryPropertyName": "Upload_File",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.extractFromFile",
+      "typeVersion": 1,
+      "position": [
+        1584,
+        208
+      ],
+      "id": "34ec0e39-6687-4adf-8555-ecd8f46fb7d6",
+      "name": "Extract from XLSX"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://v2.convertapi.com/convert/docx/to/pdf",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "Bearer "
+            }
+          ]
+        },
+        "sendBody": true,
+        "contentType": "multipart-form-data",
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "StoreFile",
+              "value": "true"
+            },
+            {
+              "parameterType": "formBinaryData",
+              "name": "File"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1392,
+        -240
+      ],
+      "id": "64017f46-b073-43f2-b7ea-0f8bf91e14c3",
+      "name": "Docx to Pdf"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://v2.convertapi.com/convert/doc/to/pdf",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "Bearer"
+            }
+          ]
+        },
+        "sendBody": true,
+        "contentType": "multipart-form-data",
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "StoreFile",
+              "value": "true"
+            },
+            {
+              "parameterType": "formBinaryData",
+              "name": "File"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1392,
+        -80
+      ],
+      "id": "eb84f649-68f5-43f4-a0e6-60a359cf3929",
+      "name": "Doc to Pdf"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://v2.convertapi.com/convert/png/to/pdf?Secret=",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {}
+          ]
+        },
+        "sendBody": true,
+        "contentType": "multipart-form-data",
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "StoreFile",
+              "value": "true"
+            },
+            {
+              "parameterType": "formBinaryData",
+              "name": "File",
+              "inputDataFieldName": "File_Upload"
+            }
+          ]
+        },
+        "options": {
+          "response": {
+            "response": {
+              "fullResponse": true,
+              "neverError": true,
+              "responseFormat": "json"
+            }
+          }
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1280,
+        224
+      ],
+      "id": "26b48ec6-0ca1-4b21-b5f5-17a65b0130b5",
+      "name": "Png to pdf"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://v2.convertapi.com/convert/jpeg/to/pdf",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "Bearer "
+            }
+          ]
+        },
+        "sendBody": true,
+        "contentType": "multipart-form-data",
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "StoreFile",
+              "value": "true"
+            },
+            {
+              "parameterType": "formBinaryData",
+              "name": "File"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1280,
+        384
+      ],
+      "id": "6bc76c84-6c9f-4505-b021-41942cd1210f",
+      "name": "JPEG to PDF"
+    },
+    {
+      "parameters": {
+        "operation": "pdf",
+        "binaryPropertyName": "File_Upload",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.extractFromFile",
+      "typeVersion": 1,
+      "position": [
+        1568,
+        -240
+      ],
+      "id": "46a0e808-70cb-433e-b7de-5a4b21e92d92",
+      "name": "Extract from PDF"
+    },
+    {
+      "parameters": {
+        "operation": "pdf",
+        "binaryPropertyName": "Upload_File",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.extractFromFile",
+      "typeVersion": 1,
+      "position": [
+        1584,
+        -80
+      ],
+      "id": "a84efa12-57f9-44be-afbf-9b812e34dc37",
+      "name": "Extract from PDF1"
+    },
+    {
+      "parameters": {
+        "operation": "pdf",
+        "binaryPropertyName": "File_Upload",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.extractFromFile",
+      "typeVersion": 1,
+      "position": [
+        1552,
+        -384
+      ],
+      "id": "50ca05ae-9d4d-4b01-850e-1256e332e22d",
+      "name": "Extract from PDF2"
+    },
+    {
+      "parameters": {
+        "operation": "pdf",
+        "binaryPropertyName": "File_Upload",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.extractFromFile",
+      "typeVersion": 1,
+      "position": [
+        1648,
+        336
+      ],
+      "id": "1adeee6d-6019-4fa9-ad38-8f6a790f90fb",
+      "name": "Extract from pdf"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://v2.convertapi.com/convert/jpg/to/pdf",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "Bearer "
+            }
+          ]
+        },
+        "sendBody": true,
+        "contentType": "multipart-form-data",
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "StoreFile",
+              "value": "true"
+            },
+            {
+              "parameterType": "formBinaryData",
+              "name": "File",
+              "inputDataFieldName": "File_Upload"
+            }
+          ]
+        },
+        "options": {
+          "response": {
+            "response": {
+              "responseFormat": "json"
+            }
+          }
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1280,
+        608
+      ],
+      "id": "7242dc82-f966-4eb2-95dd-b13911b84d3f",
+      "name": "JPG to PDF"
+    },
+    {
+      "parameters": {
+        "url": "={{ $json.Files[0].Url }}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {}
+          ]
+        },
+        "options": {
+          "response": {
+            "response": {
+              "responseFormat": "file"
+            }
+          }
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1456,
+        288
+      ],
+      "id": "5005fb21-7ba0-4709-80e4-309819a1e547",
+      "name": "Png to pdf1"
+    },
+    {
+      "parameters": {
+        "url": "={{ $json.Files[0].Url }}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {}
+          ]
+        },
+        "options": {
+          "response": {
+            "response": {
+              "responseFormat": "file",
+              "outputPropertyName": "File_Upload"
+            }
+          }
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1456,
+        480
+      ],
+      "id": "00f79bb1-0b4c-4950-a360-3eff32962b40",
+      "name": "JPEG to pdf2"
+    },
+    {
+      "parameters": {
+        "url": "={{ $json.Files[0].Url }}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {}
+          ]
+        },
+        "options": {
+          "response": {
+            "response": {
+              "responseFormat": "file",
+              "outputPropertyName": "File_Upload"
+            }
+          }
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1472,
+        640
+      ],
+      "id": "7300f24e-2c4d-4950-bbd7-d6d28e8b741b",
+      "name": "JPG to pdf3"
+    },
+    {
+      "parameters": {
+        "operation": "pdf",
+        "binaryPropertyName": "File_Upload",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.extractFromFile",
+      "typeVersion": 1,
+      "position": [
+        1632,
+        496
+      ],
+      "id": "9d4f22f3-7eb1-4bbf-a60f-20c2d368a586",
+      "name": "Extract from pdf1"
+    },
+    {
+      "parameters": {
+        "operation": "pdf",
+        "binaryPropertyName": "File_Upload",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.extractFromFile",
+      "typeVersion": 1,
+      "position": [
+        1664,
+        640
+      ],
+      "id": "039ec09f-8f02-4adc-a7e8-5e2e5729ff88",
+      "name": "Extract from pdf2"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "b5a468a1-cae6-4f43-b86a-6a733acad548",
+              "name": "Text from the pdf",
+              "value": "={{ $json.text }}",
+              "type": "string"
+            },
+            {
+              "id": "87147732-336c-426f-8878-590d0847e5e8",
+              "name": "File Name",
+              "value": "={{ $('On form submission').item.json['File Upload'][0].filename }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        2128,
+        80
+      ],
+      "id": "b18f096a-be3b-4d6d-9451-567afd28e77c",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=here you have the text:  {{ $json['Text from the pdf'] }}\nfile name:{{ $json['File Name'] }}\n",
+        "hasOutputParser": true,
+        "options": {
+          "systemMessage": "=You are an assistant for real estate document processing.  \nYour job is to extract structured data from documents such as Listing Agreements, Title Deeds, Payment Receipts, and Lease Agreements.  \n\nReturn the output as JSON with the following fields:  \n\n- Document Type (Listing Agreement, Title Deed, Payment Receipt, Lease, etc.)\n- Property Address\n- Property Size\n- Property Type\n- Owner Name\n- Agent/Broker\n- Listing Period\n- Commission\n- Amount Paid\n- Payment Date\n- Tenant Name\n- Rent Amount\n- Other Notes (anything relevant not covered in the above fields)\n- Original File URL (if provided in input)\n\nRules:\n1. If a field is not found in the document, return an empty string (\"\").\n2. Do not invent or guess information — only extract what is explicitly present. and be sure to know if the field is of name or address but written in some heading\n3. Always return valid JSON. Do not include explanations, comments, or markdown formatting — only JSON.\n\nExample output:\n{\n  \"Document Type\": \"Listing Agreement\",\n  \"Property Address\": \"123 Main Street, DHA Phase 6, Karachi\",\n  \"Property Size\": \"500 sq. yards\",\n  \"Property Type\": \"Residential\",\n  \"Owner Name\": \"\",\n  \"Agent/Broker\": \"ABC Real Estate Agency\",\n  \"Listing Period\": \"1 Oct – 30 Dec 2025\",\n  \"Commission\": \"2%\",\n  \"Amount Paid\": \"\",\n  \"Payment Date\": \"\",\n  \"Tenant Name\": \"\",\n  \"Rent Amount\": \"\",\n  \"Other Notes\": \"\",\n  \"Original File URL\": \"https://link-to-original-file.pdf\"\n}\n\n"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2.2,
+      "position": [
+        2352,
+        112
+      ],
+      "id": "8bf6f88d-7f0b-4afd-b742-34a294792828",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-4.1-mini",
+          "mode": "list",
+          "cachedResultName": "gpt-4.1-mini"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        2336,
+        288
+      ],
+      "id": "91699003-73ce-4d54-8b69-c1ffc6735b6f",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "hVv8imszC1mzFNrt",
+          "name": "n8n free OpenAI API credits"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsonSchemaExample": "{\n  \"Document Type\": \"Listing Agreement\",\n  \"Property Address\": \"123 Main Street, DHA Phase 6, Karachi\",\n  \"Property Size\": \"500 sq. yards\",\n  \"Property Type\": \"Residential\",\n  \"Owner Name\": \"\",\n  \"Agent/Broker\": \"ABC Real Estate Agency\",\n  \"Listing Period\": \"1 Oct – 30 Dec 2025\",\n  \"Commission\": \"2%\",\n  \"Amount Paid\": \"\",\n  \"Payment Date\": \"\",\n  \"Tenant Name\": \"\",\n  \"Rent Amount\": \"\",\n  \"Other Notes\": \"\",\n  \"Original File URL\":\"\"\n}\n"
+      },
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.3,
+      "position": [
+        2496,
+        288
+      ],
+      "id": "0c7ab1cd-1dc4-45bd-b6b3-cd55f7998123",
+      "name": "Structured Output Parser"
+    },
+    {
+      "parameters": {
+        "inputDataFieldName": "File_Upload",
+        "name": "={{ $json['File Upload'][0].filename }}",
+        "driveId": {
+          "__rl": true,
+          "value": "My Drive",
+          "mode": "list",
+          "cachedResultName": "My Drive",
+          "cachedResultUrl": "https://drive.google.com/drive/my-drive"
+        },
+        "folderId": {
+          "__rl": true,
+          "value": "1hQ5fw206oNMq4WEplbz9VEEP7tldxuBu",
+          "mode": "list",
+          "cachedResultName": "Real Estate Forms",
+          "cachedResultUrl": "https://drive.google.com/drive/folders/1hQ5fw206oNMq4WEplbz9VEEP7tldxuBu"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        1568,
+        -720
+      ],
+      "id": "c2ff87b6-b83c-44c1-9417-a7f26276a27a",
+      "name": "Upload file",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "8WQh2q8iVQ7VDoHg",
+          "name": "cadetmcj@gmail.com"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "16l9DAw4OthFfw-j0PCx678jrL4-jNn6nAC3sAawwDc8",
+          "mode": "list",
+          "cachedResultName": "Real Estate Documents",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/16l9DAw4OthFfw-j0PCx678jrL4-jNn6nAC3sAawwDc8/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/16l9DAw4OthFfw-j0PCx678jrL4-jNn6nAC3sAawwDc8/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Document Type": "={{ $json.output['Document Type'] }}",
+            "Property Address": "={{ $json.output['Property Address'] }}",
+            "Property Size": "={{ $json.output['Property Size'] }}",
+            "Property Type": "={{ $json.output['Property Type'] }}",
+            "Owner Name": "={{ $json.output['Owner Name'] }}",
+            "Agent/Broker": "={{ $json.output['Agent/Broker'] }}",
+            "Listing Period": "={{ $json.output['Listing Period'] }}",
+            "Commission": "={{ $json.output.Commission }}",
+            "Amount Paid": "={{ $json.output['Amount Paid'] }}",
+            "Payment Date": "={{ $json.output['Payment Date'] }}",
+            "Tenant Name": "={{ $json.output['Tenant Name'] }}",
+            "Rent Amount": "={{ $json.output['Rent Amount'] }}",
+            "Other Notes": "={{ $json.output['Other Notes'] }}",
+            "Original File ": "={{ $json.webViewLink }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "Document Type",
+              "displayName": "Document Type",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Property Address",
+              "displayName": "Property Address",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Property Size",
+              "displayName": "Property Size",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Property Type",
+              "displayName": "Property Type",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Owner Name",
+              "displayName": "Owner Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Agent/Broker",
+              "displayName": "Agent/Broker",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Listing Period",
+              "displayName": "Listing Period",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Commission",
+              "displayName": "Commission",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Amount Paid",
+              "displayName": "Amount Paid",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Payment Date",
+              "displayName": "Payment Date",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Tenant Name",
+              "displayName": "Tenant Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Rent Amount",
+              "displayName": "Rent Amount",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Other Notes",
+              "displayName": "Other Notes",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Original File ",
+              "displayName": "Original File ",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        3040,
+        96
+      ],
+      "id": "43c1b356-9eb9-489b-8917-c312949e05f4",
+      "name": "Real Estate Documents",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "4AXTfOYpNREw2pGD",
+          "name": "Demo"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "mode": "combine",
+        "combineBy": "combineByPosition",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        2720,
+        96
+      ],
+      "id": "042f0d22-2219-49ac-b368-7af722fe0c12",
+      "name": "Merge"
+    },
+    {
+      "parameters": {
+        "content": "## WEBHOOK NODE\n**IT WILL TAKE INPUT AS ANY FILE",
+        "height": 240,
+        "width": 288
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        304,
+        -80
+      ],
+      "typeVersion": 1,
+      "id": "84b02e1c-16a3-439e-92f5-21a21788f98d",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "content": "## FILE EXTENSION\n**IT WILL IDENTIFY THE FILE EXTENSION",
+        "height": 240,
+        "width": 288
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        624,
+        -80
+      ],
+      "typeVersion": 1,
+      "id": "080fc483-4e15-41c9-88cc-bbf0e1444e47",
+      "name": "Sticky Note1"
+    },
+    {
+      "parameters": {
+        "content": "## PATH\n**IT WILL IDENTIFY WHICH FILE EXTENSION WILL GO DOWN WHICH PATH",
+        "height": 400,
+        "width": 288
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        928,
+        -176
+      ],
+      "typeVersion": 1,
+      "id": "bcae5ff4-6cd2-4bbe-8992-05810aadd12f",
+      "name": "Sticky Note2"
+    },
+    {
+      "parameters": {
+        "content": "## FILE UPLOAD\n**IT WILL UPLOAD THE FILE TO GOOGLE DRIVE FOR CHECKING AFTERWARDS",
+        "height": 240,
+        "width": 288
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        1456,
+        -832
+      ],
+      "typeVersion": 1,
+      "id": "817c7c82-b988-4344-bce6-04f376a655fc",
+      "name": "Sticky Note3"
+    },
+    {
+      "parameters": {
+        "content": "## TEXT EXTRACTOR\n**IT WILL EXTRACT THE TEXT FROM ANY TYPE OF EXTENSION",
+        "height": 1312,
+        "width": 528
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        1264,
+        -496
+      ],
+      "typeVersion": 1,
+      "id": "190863bd-11ed-4a6c-b841-8b0c071ed853",
+      "name": "Sticky Note4"
+    },
+    {
+      "parameters": {
+        "content": "## IT WILL MERGE ALL THE NODES IN ONE PLACE\n",
+        "height": 240,
+        "width": 288
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        2016,
+        -16
+      ],
+      "typeVersion": 1,
+      "id": "e6bbcd4b-d1f6-4a0a-9058-7a769f11ba3e",
+      "name": "Sticky Note5"
+    },
+    {
+      "parameters": {
+        "content": "## FILTER\n### IT WILL FILTER ALL THE DATA IN THE DESIGNATED FIELDS FOR CRM\n",
+        "height": 432,
+        "width": 288
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        2320,
+        -16
+      ],
+      "typeVersion": 1,
+      "id": "9f8d459e-2bd2-443a-a551-e719a118634b",
+      "name": "Sticky Note6"
+    },
+    {
+      "parameters": {
+        "content": "## MERGE\n### IT WILL MERGE ALL THE DATA SCRAPED FROM AI AGENT AND THE GOOGLE DRIVE LINK IN ONE ROW\n",
+        "height": 272,
+        "width": 288
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        2624,
+        -32
+      ],
+      "typeVersion": 1,
+      "id": "1b630899-d193-4630-a58a-ee544efe10c2",
+      "name": "Sticky Note7"
+    },
+    {
+      "parameters": {
+        "content": "## INPUT\n### IT WILL INPUT THE DATA IN ONE ROW IN GOOGLE SHEETS",
+        "height": 272,
+        "width": 288
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        2928,
+        -32
+      ],
+      "typeVersion": 1,
+      "id": "af887106-9d2a-4e06-ba8c-b8ee29bcd7a6",
+      "name": "Sticky Note8"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "On form submission": {
+      "main": [
+        [
+          {
+            "node": "Upload file",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Code in JavaScript",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript": {
+      "main": [
+        [
+          {
+            "node": "Switch",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch": {
+      "main": [
+        [
+          {
+            "node": "Extract from PDF2",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Docx to Pdf",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Doc to Pdf",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Extract from XML",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Extract from XLSX",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Png to pdf",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "JPEG to PDF",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "JPG to PDF",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Docx to Pdf": {
+      "main": [
+        [
+          {
+            "node": "Extract from PDF",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Doc to Pdf": {
+      "main": [
+        [
+          {
+            "node": "Extract from PDF1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Png to pdf": {
+      "main": [
+        [
+          {
+            "node": "Png to pdf1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "JPEG to PDF": {
+      "main": [
+        [
+          {
+            "node": "JPEG to pdf2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract from PDF2": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "JPG to PDF": {
+      "main": [
+        [
+          {
+            "node": "JPG to pdf3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Png to pdf1": {
+      "main": [
+        [
+          {
+            "node": "Extract from pdf",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "JPEG to pdf2": {
+      "main": [
+        [
+          {
+            "node": "Extract from pdf1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "JPG to pdf3": {
+      "main": [
+        [
+          {
+            "node": "Extract from pdf2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract from PDF": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract from PDF1": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract from XML": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract from XLSX": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract from pdf": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract from pdf1": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract from pdf2": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Structured Output Parser": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Upload file": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge": {
+      "main": [
+        [
+          {
+            "node": "Real Estate Documents",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "1bb9432e-840f-4fe2-8c09-c7975fa095a9",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "4f89d7de24e1de12323093f1c418ab2473b349a2c60b70df4dece0b06dbbe028"
+  },
+  "id": "XTc2VYHYo1eue4Hb",
+  "tags": []
+}
