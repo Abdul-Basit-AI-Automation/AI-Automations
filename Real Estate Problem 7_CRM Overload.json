@@ -1,0 +1,508 @@
+{
+  "name": "My workflow",
+  "nodes": [
+    {
+      "parameters": {
+        "formTitle": "Contact Us",
+        "formFields": {
+          "values": [
+            {
+              "fieldLabel": "Name",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Phone",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Email",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Property Type",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Budget",
+              "fieldType": "number",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Any Note",
+              "requiredField": true
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.formTrigger",
+      "typeVersion": 2.3,
+      "position": [
+        0,
+        16
+      ],
+      "id": "7b2b9040-a954-41ef-9f5a-ebd6535172c4",
+      "name": "On form submission",
+      "webhookId": "b5001ac1-6198-4650-8bdc-ded16ef73593"
+    },
+    {
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyMinute"
+            }
+          ]
+        },
+        "filters": {}
+      },
+      "type": "n8n-nodes-base.gmailTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        0,
+        160
+      ],
+      "id": "40d6f5bb-f8a6-4d2d-999c-01f000a58dbd",
+      "name": "Gmail Trigger",
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "updates": [
+          "com.twilio.messaging.inbound-message.received"
+        ]
+      },
+      "type": "n8n-nodes-base.twilioTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        -144
+      ],
+      "id": "e17e5a0a-c321-4b1b-b6ab-bc6116084fa4",
+      "name": "Twilio Trigger",
+      "webhookId": "6da7354a-53ad-4d36-9d77-d87024b41fe0",
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=input data\nName:{{ $json.Name }}\nPhone:{{ $json.Phone }}\nEmail:{{ $json.Email }}\nProperty Type:{{ $json['Property Type'] }}\nbudget:{{ $json.Budget }}\nNote: {{ $json['Any Note'] }}",
+        "options": {
+          "systemMessage": "Classify this lead as Hot, Warm, or Cold.\nReturn only one word: Hot, Warm, Cold.\n"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2.2,
+      "position": [
+        224,
+        16
+      ],
+      "id": "6c303815-a115-442b-8077-ebd1c250c2f5",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "model": "openai/gpt-oss-120b",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGroq",
+      "typeVersion": 1,
+      "position": [
+        240,
+        176
+      ],
+      "id": "0aa37267-42a7-4213-bbda-9cf461ffdcad",
+      "name": "Groq Chat Model",
+      "credentials": {
+        "groqApi": {
+          "id": "IINmUB8TLxiIOxer",
+          "name": "Groq account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "421caa9a-6497-4e40-8351-4391ae8aeeb2",
+              "leftValue": "={{ $json.output }}",
+              "rightValue": "Hot",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        816,
+        16
+      ],
+      "id": "51807b78-dcee-4978-89f9-c404ac722e1c",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "resource": "draft",
+        "subject": "Hot Lead!!",
+        "message": "=The details of the individual are:\nName: {{ $('On form submission').item.json.Name }}\nPhone: {{ $('On form submission').item.json.Phone }}\nEmail: {{ $('On form submission').item.json.Email }}\nProperty Type: {{ $('On form submission').item.json['Property Type'] }}\nBudget: {{ $('On form submission').item.json.Budget }}\nMessage: {{ $('On form submission').item.json['Any Note'] }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        1088,
+        0
+      ],
+      "id": "09e068d7-3eaa-475d-84a0-0829389e45c0",
+      "name": "Create a draft",
+      "webhookId": "54a5f320-f200-4349-86a8-65a803b70384",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "th3N7lZNNRJIPMxh",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "draft",
+        "subject": "Hey there thank you for Contacting!!",
+        "message": "=Hi {{ $('On form submission').item.json.Name }}, thanks for your interest in {{ $('On form submission').item.json['Property Type'] }}.  Here is the personal number of my team...you can reach out to them for better convenience.....",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        1248,
+        0
+      ],
+      "id": "ba71e8a3-a46f-4afb-89a7-8c484573ec17",
+      "name": "Create a draft1",
+      "webhookId": "4e0f5827-d927-426f-88b6-2cf834c62bd5",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "th3N7lZNNRJIPMxh",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "appendOrUpdate",
+        "documentId": {
+          "__rl": true,
+          "value": "1_8le-Y4O-YLNGQNiZBl5fS5mAgqr8_g2AYCMnFd6yxI",
+          "mode": "list",
+          "cachedResultName": "Real Estate Leads",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1_8le-Y4O-YLNGQNiZBl5fS5mAgqr8_g2AYCMnFd6yxI/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1_8le-Y4O-YLNGQNiZBl5fS5mAgqr8_g2AYCMnFd6yxI/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Name": "={{ $('On form submission').item.json.Name }}",
+            "Email": "={{ $('On form submission').item.json.Email }}",
+            "Property Type": "={{ $('On form submission').item.json['Property Type'] }}",
+            "Ph No.": "={{ $('On form submission').item.json.Phone }}",
+            "Budget": "={{ $('On form submission').item.json.Budget }}",
+            "Message": "={{ $('On form submission').item.json['Any Note'] }}",
+            "Lead Type": "={{ $json.output }}"
+          },
+          "matchingColumns": [
+            "Name"
+          ],
+          "schema": [
+            {
+              "id": "Name",
+              "displayName": "Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Email",
+              "displayName": "Email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Property Type",
+              "displayName": "Property Type",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Ph No.",
+              "displayName": "Ph No.",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Budget",
+              "displayName": "Budget",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Message",
+              "displayName": "Message",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Lead Type",
+              "displayName": "Lead Type",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        560,
+        16
+      ],
+      "id": "e3eb524a-55c2-46e6-8e02-a0f52b95bf0e",
+      "name": "Append or update row in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "xMfUkMmeOR6SyS55",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "## Input Data\n",
+        "height": 640,
+        "color": 3
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -48,
+        -272
+      ],
+      "typeVersion": 1,
+      "id": "79f508e7-5a0d-4cd1-a1b0-8cfe0be48fc1",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "content": "## Identify as <Type> Lead\n",
+        "height": 640,
+        "width": 256,
+        "color": 5
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        208,
+        -272
+      ],
+      "typeVersion": 1,
+      "id": "58fbcdcf-5484-418a-87d2-ffbbda96d408",
+      "name": "Sticky Note1"
+    },
+    {
+      "parameters": {
+        "content": "## Add in CRM\n",
+        "height": 640,
+        "width": 256,
+        "color": 4
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        480,
+        -272
+      ],
+      "typeVersion": 1,
+      "id": "10052e4b-b9e2-45d1-a31d-13482d7bdc2d",
+      "name": "Sticky Note2"
+    },
+    {
+      "parameters": {
+        "content": "## Redirect\n",
+        "height": 640,
+        "width": 256,
+        "color": 6
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        752,
+        -272
+      ],
+      "typeVersion": 1,
+      "id": "dbb3736e-fa91-45a5-a687-9c50a82b46e9",
+      "name": "Sticky Note3"
+    },
+    {
+      "parameters": {
+        "content": "## Send Emails\n",
+        "height": 640,
+        "width": 352,
+        "color": 7
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        1024,
+        -272
+      ],
+      "typeVersion": 1,
+      "id": "407ea259-1a1d-4201-8a7b-0659e17722db",
+      "name": "Sticky Note4"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        448,
+        176
+      ],
+      "id": "6a5ee803-417a-4e55-a9d0-7928746a51e2",
+      "name": "Sticky Note5"
+    }
+  ],
+  "pinData": {
+    "On form submission": [
+      {
+        "json": {
+          "Name": "abdul basit",
+          "Phone": "*********",
+          "Email": "example@gmail.com",
+          "Property Type": "Single Type",
+          "Budget": 100000,
+          "Any Note": "DHA PLOT",
+          "submittedAt": "2025-10-01T11:38:31.869+05:00",
+          "formMode": "test"
+        }
+      }
+    ]
+  },
+  "connections": {
+    "On form submission": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Groq Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Append or update row in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Create a draft",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        []
+      ]
+    },
+    "Create a draft": {
+      "main": [
+        [
+          {
+            "node": "Create a draft1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Append or update row in sheet": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "9f1b4215-fb84-486b-b749-f0b5ae64068b",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "1212c406c26670d3fe43d357cefcbd80a6d6a88a7666fca6cff8698a1afa461c"
+  },
+  "id": "qPSQhKafs6TKrMRo",
+  "tags": []
+}
