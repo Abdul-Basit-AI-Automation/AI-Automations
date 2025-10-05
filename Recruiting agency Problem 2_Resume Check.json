@@ -1,0 +1,612 @@
+{
+  "name": "Recruiting agency Problem 2_Resume Check",
+  "nodes": [
+    {
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyMinute"
+            }
+          ]
+        },
+        "documentId": {
+          "__rl": true,
+          "value": "19XHgTnlU8CdI_XPKgQtByjEVWCRO6oO_bqIR0vwrxtI",
+          "mode": "list",
+          "cachedResultName": "Resume CRM",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/19XHgTnlU8CdI_XPKgQtByjEVWCRO6oO_bqIR0vwrxtI/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/19XHgTnlU8CdI_XPKgQtByjEVWCRO6oO_bqIR0vwrxtI/edit#gid=0"
+        },
+        "event": "rowAdded",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheetsTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "7f3c2aed-c64a-41b8-a6ae-8e49e73c18e2",
+      "name": "New Added Row",
+      "credentials": {
+        "googleSheetsTriggerOAuth2Api": {
+          "id": "pTZ8yruBFiSka3fT",
+          "name": "Google Sheets Trigger account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Here is the input:\nName: {{ $json.Name }}\nEmail:{{ $json.Email }}\nPh No:{{ $json.Email }}\nLinkedIn:{{ $json.LinkedIn }}\nExperience:{{ $json.Experience }}\nSkills: {{ $json.Skills }}\nEducation:{{ $json.Education }}\nCurrent Position:{{ $json['Current Position'] }}\nCurrent Company:{{ $json['Current Company'] }}\nLocation:{{ $json.Location }}\nLanguage:{{ $json.Language }}\nOther:{{ $json.Other }}",
+        "hasOutputParser": true,
+        "options": {
+          "systemMessage": "=You are an AI Resume Screening Assistant for [Company Name]. \nYour job is to evaluate candidates applying for the role of **AI Consultant**.\n\nThe role requirements are: \n- Solid understanding of basic AI concepts (machine learning, NLP, automation, chatbots, etc.) \n- At least 1–2 years of hands-on experience with AI projects or related implementations\n- Knowledge of Python or automation tools such as Zapier, Make, or n8n (bonus points for cloud platforms like AWS/GCP)\n- Strong communication skills and ability to explain AI solutions in simple business terms\n- Consulting mindset: ability to understand client problems and suggest AI-driven solutions\n-When screening resumes, check for evidence of the following skills: basic AI/ML understanding, Python, data analysis, automation tools (Zapier, Make, n8n), chatbots/NLP, cloud knowledge, APIs, workflow automation, communication skills, consulting mindset. Highlight both technical and soft skills, as both are critical for the role.\n\nYour task:\n1. Analyze the **resume text** provided.\n2. Extract key details: \n   - Candidate name (if available)\n   - Years of experience\n   - Skills mentioned\n   - Relevant AI/automation projects\n   - Communication/soft skills indicators\n3. Compare the candidate’s skills and experience to the job requirements.\n4. Assign a **match score (0–100)** based on fit.\n   - 90–100: Excellent fit\n   - 70–89: Good fit (missing a few skills, but strong overall)\n   - 50–69: Partial fit (may need training)\n   - Below 50: Not a good fit\n5. Highlight missing skills or gaps.\n6. Provide a **concise recommendation**: “Strong Fit,” “Potential Fit,” or “Not Fit.”\n\nOutput format (always structured):\n---\nCandidate Name: [Extracted if present]\nYears of Experience: [Extracted]\nKey Skills: [List]\nRelevant Projects: [Summarize if present]\nMatch Score: [0–100]\nStrengths: [Short bullet list]\nMissing Skills: [Short bullet list]\nRecommendation: [Strong Fit / Potential Fit / Not Fit]\n---\n\nImportant: Be objective, don’t make up information not in the resume. \nIf information is unclear or missing, mention it.\n"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2.2,
+      "position": [
+        208,
+        0
+      ],
+      "id": "f395cc0e-9133-4a0b-ae26-d89347910974",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "schemaType": "manual",
+        "inputSchema": "{\n  \"$schema\": \"http://json-schema.org/draft-07/schema#\",\n  \"title\": \"ResumeScreeningResult\",\n  \"type\": \"object\",\n  \"properties\": {\n    \"candidateName\": { \"type\": \"string\" },\n    \"yearsOfExperience\": { \"type\": \"integer\" },\n    \"keySkills\": {\n      \"type\": \"array\",\n      \"items\": { \"type\": \"string\" }\n    },\n    \"relevantProjects\": { \"type\": \"string\" },\n    \"matchScore\": { \"type\": \"integer\", \"minimum\": 0, \"maximum\": 100 },\n    \"strengths\": {\n      \"type\": \"array\",\n      \"items\": { \"type\": \"string\" }\n    },\n    \"missingSkills\": {\n      \"type\": \"array\",\n      \"items\": { \"type\": \"string\" }\n    },\n    \"recommendation\": {\n      \"type\": \"string\",\n      \"enum\": [\"Strong Fit\", \"Good Fit\", \"Potential Fit\", \"Not Fit\"]\n    }\n  },\n  \"required\": [\n    \"candidateName\",\n    \"yearsOfExperience\",\n    \"keySkills\",\n    \"matchScore\",\n    \"recommendation\"\n  ]\n}\n"
+      },
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.3,
+      "position": [
+        352,
+        144
+      ],
+      "id": "d5b7fe07-4e77-485c-a157-00fd4bd0952d",
+      "name": "Structured Output Parser"
+    },
+    {
+      "parameters": {
+        "model": "openai/gpt-oss-20b",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGroq",
+      "typeVersion": 1,
+      "position": [
+        208,
+        144
+      ],
+      "id": "7a2cff81-4f45-418f-93dc-6fae892f487a",
+      "name": "Groq Chat Model",
+      "credentials": {
+        "groqApi": {
+          "id": "IINmUB8TLxiIOxer",
+          "name": "Groq account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "73e50428-c82b-4ba5-8dad-9c6723d904c9",
+              "name": "output.candidateName",
+              "value": "={{ $json.output.candidateName }}",
+              "type": "string"
+            },
+            {
+              "id": "de3d6322-a5c3-451d-9cae-9a1bf2416aa2",
+              "name": "output.yearsOfExperience",
+              "value": "={{ $json.output.yearsOfExperience }}",
+              "type": "number"
+            },
+            {
+              "id": "5d135cfb-9d3e-4fc5-9f9f-8778afc51eb9",
+              "name": "output.keySkills",
+              "value": "={{ $json.output.keySkills }}",
+              "type": "array"
+            },
+            {
+              "id": "745075bc-4f1d-450b-8c34-1f09fc62d5f9",
+              "name": "output.matchScore",
+              "value": "={{ $json.output.matchScore }}",
+              "type": "number"
+            },
+            {
+              "id": "b8bbde2b-9420-4835-bea8-1652a05a43e7",
+              "name": "output.strengths",
+              "value": "={{ $json.output.strengths }}",
+              "type": "array"
+            },
+            {
+              "id": "e2ee6638-5fb7-497b-a316-7ad062475b9c",
+              "name": "output.missingSkills",
+              "value": "={{ $json.output.missingSkills }}",
+              "type": "array"
+            },
+            {
+              "id": "29292dc1-643e-4934-bac8-8f6ec9a15f14",
+              "name": "output.recommendation",
+              "value": "={{ $json.output.recommendation }}",
+              "type": "string"
+            },
+            {
+              "id": "d1ebdf60-19c7-4b92-a74f-b0560ae97e99",
+              "name": "output.relevantProjects",
+              "value": "={{ $json.output.relevantProjects }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        544,
+        0
+      ],
+      "id": "1186b76a-81fa-4379-8355-e8118a9e7b6d",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "149pa_YEv9c_VXqHv3uXsDJ7rWaWgymmf--ptVYlaO3Y",
+          "mode": "list",
+          "cachedResultName": "Candidate Data",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/149pa_YEv9c_VXqHv3uXsDJ7rWaWgymmf--ptVYlaO3Y/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Candidate Name": "={{ $json.output.candidateName }}",
+            "Years of Experience": "={{ $json.output.yearsOfExperience }}",
+            "Key Skills": "={{ $json.output.keySkills }}",
+            "Strenghts": "={{ $json.output.strengths }}",
+            "Missing Skills": "={{ $json.output.missingSkills }}",
+            "Relevant Projects": "={{ $json.output.relevantProjects }}",
+            "Score": "={{ $json.output.matchScore }}",
+            "Recommendation": "={{ $json.output.recommendation }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "Candidate Name",
+              "displayName": "Candidate Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Years of Experience",
+              "displayName": "Years of Experience",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Key Skills",
+              "displayName": "Key Skills",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Strenghts",
+              "displayName": "Strenghts",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Missing Skills",
+              "displayName": "Missing Skills",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Relevant Projects",
+              "displayName": "Relevant Projects",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Score",
+              "displayName": "Score",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Recommendation",
+              "displayName": "Recommendation",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Column 1",
+              "displayName": "Column 1",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Column 2",
+              "displayName": "Column 2",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Column 3",
+              "displayName": "Column 3",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Column 4",
+              "displayName": "Column 4",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Column 5",
+              "displayName": "Column 5",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Column 6",
+              "displayName": "Column 6",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Column 7",
+              "displayName": "Column 7",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Column 8",
+              "displayName": "Column 8",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Column 9",
+              "displayName": "Column 9",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Column 10",
+              "displayName": "Column 10",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Column 11",
+              "displayName": "Column 11",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Column 12",
+              "displayName": "Column 12",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Column 13",
+              "displayName": "Column 13",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Column 14",
+              "displayName": "Column 14",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Column 15",
+              "displayName": "Column 15",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Column 16",
+              "displayName": "Column 16",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Column 17",
+              "displayName": "Column 17",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Column 18",
+              "displayName": "Column 18",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        832,
+        0
+      ],
+      "id": "f963dc98-982a-44a9-a530-7d4bef808046",
+      "name": "Append row in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "xMfUkMmeOR6SyS55",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "## Input \n",
+        "height": 192
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -64,
+        -48
+      ],
+      "typeVersion": 1,
+      "id": "20827323-803a-4c2d-989a-87bf85926c34",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "content": "## Assessor",
+        "height": 288,
+        "width": 256,
+        "color": 4
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        192,
+        -48
+      ],
+      "typeVersion": 1,
+      "id": "584bc073-cefc-4ce8-96dc-eeb3047bf6f3",
+      "name": "Sticky Note1"
+    },
+    {
+      "parameters": {
+        "content": "## Cleanse",
+        "height": 288,
+        "width": 256,
+        "color": 3
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        464,
+        -48
+      ],
+      "typeVersion": 1,
+      "id": "43653208-7aa0-4f56-bdd3-cb75d91c7fae",
+      "name": "Sticky Note2"
+    },
+    {
+      "parameters": {
+        "content": "## CRM",
+        "height": 288,
+        "width": 256,
+        "color": 6
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        736,
+        -48
+      ],
+      "typeVersion": 1,
+      "id": "2db1335f-37fb-4330-b09f-40dcbbcd0471",
+      "name": "Sticky Note3"
+    }
+  ],
+  "pinData": {
+    "New Added Row": [
+      {
+        "json": {
+          "Name": "ABDUL BASIT",
+          "Email": "abdulbasit.mcj.9046@gmail.com",
+          "Ph No.": 923227955409,
+          "LinkedIn": "",
+          "Experience": "",
+          "Skills": "[\"Automated Content Creation\",\"Automated LinkedIn Posting\",\"Automated Instagram Posting\",\"System Integration\",\"App Integration\",\"Business Scalability\",\"Email Logging\",\"AI Voice Chatbots\",\"N8N\",\"Canva\",\"CRM\",\"Google Sheets\",\"Airtable\",\"HubSpot\",\"WhatsApp\",\"Live Chat\",\"AI Automation\"]",
+          "Education": "[\"2020-2022 MILITARY COLLEGE JHELUM - Matric in Computer Science\",\"2022-2025 MILITARY COLLEGE JHELUM - Intermediate in Computer Science\"]",
+          "Current Position": "AI CONSULTANT",
+          "Current Company": "",
+          "Location": "Rawalpindi, Punjab, Pakistan",
+          "Language": "English, Urdu, Punjabi",
+          "Other": "PROFILE: I'm an A1 Automation Specialist who helps businesses, entrepreneurs, and creators save time and scale smarter with custom A1-powered workflows and agents. By automating repetitive tasks like emails, data entry, and content handling. I free you from manual work and ensure accuracy and consistency. This means faster results, lower costs, and more time to focus on strategy, creativity, and growth. My goal is simple: to make your business not just run—but run smarter. SOME IMP A1 AGENTS: A1 Content & Social Media Agent (Made by: N8N - Generates content ideas and drafts based on trends/keywords. Designs simple graphics or carousels using Canva integration. Automatically schedules posts on LinkedIn, Instagram, or Twitter. Tracks engagement and reports performance.) A1 Lead Management Agent (Made by: N8N - Captures leads automatically from email, LinkedIn, or web forms. Organizes them into a CRM (Google Sheets, Airtable, HubSpot, etc.). Sends instant auto-replies, follow-ups, or reminders. Scores leads based on relevance so sales teams focus on the best ones.) A1 Customer Support Agent (Made by: N8N - Provides 24/7 instant responses to FAQs via email WhatsApp, or live chat. Escalates complex issues to a human when needed. Tracks and logs customer conversations into a CRM. Learns from interactions to improve responses over time.) MY SERVICES: I design custom A1 agents and automated workflows that handle your repetitive tasks, lead management, and social media content—so you can focus on growth. From setup to hosting and integration, I take care of everything to ensure your business runs smarter, faster, and stress-free.",
+          "File": "https://drive.google.com/file/d/16TUgalhuaWWOje3mM8VbAMpc1Tza5ft_/view?usp=drivesdk",
+          "Column 4": "",
+          "Column 5": "",
+          "Column 6": "",
+          "Column 7": "",
+          "Column 8": "",
+          "Column 9": "",
+          "Column 10": "",
+          "Column 11": "",
+          "Column 12": "",
+          "Column 13": "",
+          "Column 14": "",
+          "Column 15": "",
+          "Column 16": "",
+          "Column 17": ""
+        }
+      }
+    ]
+  },
+  "connections": {
+    "New Added Row": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Structured Output Parser": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Groq Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Append row in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "6649669e-cc7e-4d93-b642-89d7cdcf2ecf",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "1212c406c26670d3fe43d357cefcbd80a6d6a88a7666fca6cff8698a1afa461c"
+  },
+  "id": "91VSNbG0Jr6Lz8ur",
+  "tags": []
+}
