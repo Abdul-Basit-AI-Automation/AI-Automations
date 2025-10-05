@@ -1,0 +1,1205 @@
+{
+  "name": "Convert any file type into PDF and extract Text from resume and documents",
+  "nodes": [
+    {
+      "parameters": {
+        "formTitle": "Upload your Resume",
+        "formFields": {
+          "values": [
+            {
+              "fieldLabel": "Resume",
+              "fieldType": "file",
+              "acceptFileTypes": "pdf, doc, docx, jpeg, jpg, pdf",
+              "requiredField": true
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.formTrigger",
+      "typeVersion": 2.3,
+      "position": [
+        224,
+        0
+      ],
+      "id": "66da93c1-5ca5-4318-90af-ca402254cf59",
+      "name": "On form submission",
+      "webhookId": "5796a01f-e219-4615-b458-19d7840acf02"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://api.ocr.space/parse/image",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "apikey"
+            }
+          ]
+        },
+        "sendBody": true,
+        "contentType": "multipart-form-data",
+        "bodyParameters": {
+          "parameters": [
+            {
+              "parameterType": "formBinaryData",
+              "name": "File",
+              "inputDataFieldName": "Resume"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1392,
+        192
+      ],
+      "id": "df69d4fe-7aee-4148-a905-d03b4cdcea94",
+      "name": "HTTP Request"
+    },
+    {
+      "parameters": {
+        "jsCode": "// For runOnceForAllItems mode\nconst result = [];\nfor (const item of $input.all()) {\n  let extension = \"unknown\";\n  const binaryKeys = Object.keys(item.binary || {});\n  \n  if (binaryKeys.length > 0) {\n    const fileMeta = item.binary[binaryKeys[0]];\n    if (fileMeta && fileMeta.fileName) {\n      extension = fileMeta.fileName.split('.').pop().toLowerCase();\n    }\n  }\n\n  result.push({\n    json: { extension },   // use for Switch\n    binary: item.binary    // pass the file forward\n  });\n}\nreturn result;\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        544,
+        0
+      ],
+      "id": "907b2259-b7aa-4d28-8883-1b9ad0cc1164",
+      "name": "Code in JavaScript"
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.extension }}",
+                    "rightValue": "pdf",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "9e1b8dc2-bf6b-4b0b-bc1e-c98207333105"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "pdf"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "1058cfa7-6353-4cd4-b2f2-bae94787cda5",
+                    "leftValue": "={{ $json.extension }}",
+                    "rightValue": "docx",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "docx"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "0dd676f2-dde7-4185-b9cb-78e6a4e93760",
+                    "leftValue": "={{ $json.extension }}",
+                    "rightValue": "doc",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "doc"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "5ae25e2e-ab95-4240-b92e-8100f5f19ec1",
+                    "leftValue": "={{ $json.extension }}",
+                    "rightValue": "png",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "png"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "718e7cb1-8f94-487b-a3fb-c98799bb09ea",
+                    "leftValue": "={{ $json.extension }}",
+                    "rightValue": "jpeg",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "jpeg"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "3dc6d42a-2440-4bf1-9f1e-93d886d321a7",
+                    "leftValue": "={{ $json.extension }}",
+                    "rightValue": "jpg",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "jpg"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [
+        912,
+        -80
+      ],
+      "id": "2d14b945-a893-4025-a53b-9eede8af6296",
+      "name": "Switch"
+    },
+    {
+      "parameters": {
+        "content": "## WEBHOOK NODE\n**IT WILL TAKE INPUT AS ANY FILE",
+        "height": 240,
+        "width": 288
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        160,
+        -96
+      ],
+      "typeVersion": 1,
+      "id": "52302db7-e101-47a6-a45f-5c9ddf2b8358",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "content": "## FILE EXTENSION\n**IT WILL IDENTIFY THE FILE EXTENSION",
+        "height": 240,
+        "width": 288,
+        "color": 3
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        464,
+        -96
+      ],
+      "typeVersion": 1,
+      "id": "87626c40-0796-4deb-9a26-a5d032a073ca",
+      "name": "Sticky Note1"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://v2.convertapi.com/convert/docx/to/pdf",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "Bearer "
+            }
+          ]
+        },
+        "sendBody": true,
+        "contentType": "multipart-form-data",
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "StoreFile",
+              "value": "true"
+            },
+            {
+              "parameterType": "formBinaryData",
+              "name": "File"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1200,
+        -160
+      ],
+      "id": "7830ca26-5d58-4f53-a534-d36128f74205",
+      "name": "Docx to Pdf"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://v2.convertapi.com/convert/doc/to/pdf",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "Bearer "
+            }
+          ]
+        },
+        "sendBody": true,
+        "contentType": "multipart-form-data",
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "StoreFile",
+              "value": "true"
+            },
+            {
+              "parameterType": "formBinaryData",
+              "name": "File"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1200,
+        -16
+      ],
+      "id": "6ec0ef15-e4db-4a63-a43d-92ac02395933",
+      "name": "Doc to Pdf"
+    },
+    {
+      "parameters": {
+        "operation": "pdf",
+        "binaryPropertyName": "File_Upload",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.extractFromFile",
+      "typeVersion": 1,
+      "position": [
+        1392,
+        -160
+      ],
+      "id": "34d7577f-985f-494c-ba9b-306b189de8b3",
+      "name": "Extract from PDF"
+    },
+    {
+      "parameters": {
+        "operation": "pdf",
+        "binaryPropertyName": "Upload_File",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.extractFromFile",
+      "typeVersion": 1,
+      "position": [
+        1392,
+        -16
+      ],
+      "id": "809d2f11-17b5-49ef-acfc-0aa48aea742a",
+      "name": "Extract from PDF1"
+    },
+    {
+      "parameters": {
+        "operation": "pdf",
+        "binaryPropertyName": "Resume",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.extractFromFile",
+      "typeVersion": 1,
+      "position": [
+        1392,
+        -304
+      ],
+      "id": "e5cae7ec-ee83-4bce-a633-7852e9854bef",
+      "name": "Extract from PDF2"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "ab390f05-ea4e-4889-8672-39e633cdd621",
+              "name": "Extracted Text",
+              "value": "={{ $json.ParsedResults[0].ParsedText }}",
+              "type": "string"
+            },
+            {
+              "id": "5a2da900-00ed-49cc-9436-dc4eb00d5b73",
+              "name": "text",
+              "value": "={{ $json.text }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1808,
+        -32
+      ],
+      "id": "a14de770-2f65-42e3-906f-7b33bf959e4f",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Parse this resume OCR text:\n\n{{$json[\"Extracted Text\"]}}\n",
+        "hasOutputParser": true,
+        "options": {
+          "systemMessage": "=You are an AI resume parser. You will receive raw OCR text from a resume. \nExtract candidate information and return it strictly as valid JSON in this structure:\n\n\nRules:\n- If information is missing, return an empty string (\"\") or empty list ([]).\n- Never add explanations, only output JSON.\n- Normalize phone numbers to international format if possible.\n- Extract skills as short keywords (e.g. \"Automation\", \"N8N\", \"AI Chatbots\").\n- Use reasonable estimates for \"years_experience\" if explicit number not found.\n- donot exculde any data if something cannot be figured out by you then give that as output in other section\n"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2.2,
+      "position": [
+        2160,
+        -32
+      ],
+      "id": "42c75b4b-d5d8-46f3-b15e-39e82672f9d3",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "jsonSchemaExample": "{\n  \"full_name\": \"Johnathan D. Smith\",\n  \"email\": \"john.smith@gmail.com\",\n  \"phone\": \"+14155551234\",\n  \"linkedin\": \"https://linkedin.com/in/johnsmith\",\n  \"skills\": [\"Python\", \"Django\", \"AWS\", \"Docker\"],\n  \"years_experience\": 7,\n  \"education\": [\"B.Sc Computer Science - Stanford University\"],\n  \"current_position\": \"Senior Backend Engineer\",\n  \"current_company\": \"Stripe\",\n  \"location\": \"San Francisco, CA\",\n  \"Language\": \"Hindi\",\n  \"other\": \"this is the last text which i didnot know to send of to\"\n}\n"
+      },
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.3,
+      "position": [
+        2272,
+        144
+      ],
+      "id": "03bdfc04-8721-4e58-a8c2-8689825ef2de",
+      "name": "Structured Output Parser"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-4.1-mini"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        2144,
+        144
+      ],
+      "id": "790df976-4d97-434c-8a9e-8cd346295cdd",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "nmb4CTzrGxFWF2WZ",
+          "name": "n8n free OpenAI API credits"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        2128,
+        144
+      ],
+      "id": "640e0513-b828-4648-8f68-2e1b1b21b38b",
+      "name": "Google Gemini Chat Model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "RHKSM7dW9bNVwvl6",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "appendOrUpdate",
+        "documentId": {
+          "__rl": true,
+          "value": "19XHgTnlU8CdI_XPKgQtByjEVWCRO6oO_bqIR0vwrxtI",
+          "mode": "list",
+          "cachedResultName": "Resume CRM",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/19XHgTnlU8CdI_XPKgQtByjEVWCRO6oO_bqIR0vwrxtI/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/19XHgTnlU8CdI_XPKgQtByjEVWCRO6oO_bqIR0vwrxtI/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Name": "={{ $json.output.full_name }}",
+            "Email": "={{ $json.output.email }}",
+            "Ph No.": "={{ $json.output.phone }}",
+            "LinkedIn": "={{ $json.output.linkedin }}",
+            "Skills": "={{ $json.output.skills }}",
+            "Experience": "={{ $json.output.years_experience }}",
+            "Education": "={{ $json.output.education }}",
+            "Current Position": "={{ $json.output.current_position }}",
+            "Current Company": "={{ $json.output.current_company }}",
+            "Location": "={{ $json.output.location }}",
+            "Other": "={{ $json.output.other }}",
+            "Language": "={{ $json.output.Language }}",
+            "File": "={{ $('Upload file').item.json.webViewLink }}"
+          },
+          "matchingColumns": [
+            "Name"
+          ],
+          "schema": [
+            {
+              "id": "Name",
+              "displayName": "Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Email",
+              "displayName": "Email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Ph No.",
+              "displayName": "Ph No.",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "LinkedIn",
+              "displayName": "LinkedIn",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Experience",
+              "displayName": "Experience",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Skills",
+              "displayName": "Skills",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Education",
+              "displayName": "Education",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Current Position",
+              "displayName": "Current Position",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Current Company",
+              "displayName": "Current Company",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Location",
+              "displayName": "Location",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Language",
+              "displayName": "Language",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Other",
+              "displayName": "Other",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "File",
+              "displayName": "File",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Column 4",
+              "displayName": "Column 4",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Column 5",
+              "displayName": "Column 5",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Column 6",
+              "displayName": "Column 6",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Column 7",
+              "displayName": "Column 7",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Column 8",
+              "displayName": "Column 8",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Column 9",
+              "displayName": "Column 9",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Column 10",
+              "displayName": "Column 10",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Column 11",
+              "displayName": "Column 11",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Column 12",
+              "displayName": "Column 12",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Column 13",
+              "displayName": "Column 13",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Column 14",
+              "displayName": "Column 14",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Column 15",
+              "displayName": "Column 15",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Column 16",
+              "displayName": "Column 16",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Column 17",
+              "displayName": "Column 17",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        2880,
+        0
+      ],
+      "id": "e3322439-26c3-414a-b5ec-585e4fe53e11",
+      "name": "Append or update row in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "xMfUkMmeOR6SyS55",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "## PATH\n**IT WILL IDENTIFY WHICH FILE EXTENSION WILL GO DOWN WHICH PATH",
+        "height": 400,
+        "width": 288,
+        "color": 4
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        800,
+        -192
+      ],
+      "typeVersion": 1,
+      "id": "69e542a9-5af6-443a-ab94-e64d5ae94d7e",
+      "name": "Sticky Note2"
+    },
+    {
+      "parameters": {
+        "content": "## TEXT EXTRACTOR\n**IT WILL EXTRACT THE TEXT FROM ANY TYPE OF EXTENSION",
+        "height": 816,
+        "width": 528,
+        "color": 5
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        1152,
+        -416
+      ],
+      "typeVersion": 1,
+      "id": "7d071c4f-8a8d-44d3-8949-015889fce45a",
+      "name": "Sticky Note4"
+    },
+    {
+      "parameters": {
+        "content": "## IT WILL MERGE ALL THE NODES IN ONE PLACE\n",
+        "height": 240,
+        "width": 288,
+        "color": 6
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        1712,
+        -128
+      ],
+      "typeVersion": 1,
+      "id": "77da596a-a1a1-40d3-b82c-f8f797f8a1fb",
+      "name": "Sticky Note5"
+    },
+    {
+      "parameters": {
+        "content": "## FILTER\n### IT WILL FILTER ALL THE DATA IN THE DESIGNATED FIELDS FOR CRM\n",
+        "height": 432,
+        "width": 288,
+        "color": 7
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        2112,
+        -176
+      ],
+      "typeVersion": 1,
+      "id": "51f0d429-9842-4428-b74d-453fef657ade",
+      "name": "Sticky Note6"
+    },
+    {
+      "parameters": {
+        "content": "## INPUT\n### IT WILL INPUT THE DATA IN ONE ROW IN GOOGLE SHEETS",
+        "height": 272,
+        "width": 288,
+        "color": 3
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        2816,
+        -112
+      ],
+      "typeVersion": 1,
+      "id": "f627ce16-c390-42eb-bf1f-dd569f5c0693",
+      "name": "Sticky Note8"
+    },
+    {
+      "parameters": {
+        "inputDataFieldName": "Resume",
+        "name": "={{ $json.Resume[0].filename }}",
+        "driveId": {
+          "__rl": true,
+          "value": "My Drive",
+          "mode": "list",
+          "cachedResultName": "My Drive",
+          "cachedResultUrl": "https://drive.google.com/drive/my-drive"
+        },
+        "folderId": {
+          "__rl": true,
+          "value": "1srp_ZKRgI9Z3a_vKM7NM-ooeURIzIyJn",
+          "mode": "list",
+          "cachedResultName": "Resume Original Files",
+          "cachedResultUrl": "https://drive.google.com/drive/folders/1srp_ZKRgI9Z3a_vKM7NM-ooeURIzIyJn"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        1408,
+        -608
+      ],
+      "id": "a319269a-e759-4e16-abb2-76a71f20fa14",
+      "name": "Upload file",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "dtDuRDI16u8KuGEN",
+          "name": "Google Drive account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "mode": "combine",
+        "combineBy": "combineByPosition",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        2576,
+        0
+      ],
+      "id": "d03bdccb-4059-47aa-81c5-04abb5967246",
+      "name": "Merge"
+    },
+    {
+      "parameters": {
+        "content": "## FILE UPLOAD\n**IT WILL UPLOAD THE FILE TO GOOGLE DRIVE FOR CHECKING AFTERWARDS",
+        "height": 240,
+        "width": 288,
+        "color": 4
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        1296,
+        -720
+      ],
+      "typeVersion": 1,
+      "id": "b14a308b-2d97-4036-87f6-8d9f26178e31",
+      "name": "Sticky Note3"
+    },
+    {
+      "parameters": {
+        "content": "## MERGE\n### IT WILL MERGE ALL THE DATA SCRAPED FROM AI AGENT AND THE GOOGLE DRIVE LINK IN ONE ROW\n",
+        "height": 272,
+        "width": 288,
+        "color": 2
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        2480,
+        -128
+      ],
+      "typeVersion": 1,
+      "id": "23b0dda5-4a7e-43c7-b2ab-2b71906c95b8",
+      "name": "Sticky Note7"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "On form submission": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Upload file",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript": {
+      "main": [
+        [
+          {
+            "node": "Switch",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch": {
+      "main": [
+        [
+          {
+            "node": "Extract from PDF2",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Docx to Pdf",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Doc to Pdf",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Docx to Pdf": {
+      "main": [
+        [
+          {
+            "node": "Extract from PDF",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Doc to Pdf": {
+      "main": [
+        [
+          {
+            "node": "Extract from PDF1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract from PDF2": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract from PDF": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract from PDF1": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Structured Output Parser": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        []
+      ]
+    },
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Upload file": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Merge": {
+      "main": [
+        [
+          {
+            "node": "Append or update row in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "d71cb24f-97cb-487c-9d18-f64256f44805",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "1212c406c26670d3fe43d357cefcbd80a6d6a88a7666fca6cff8698a1afa461c"
+  },
+  "id": "RKxOjV7URKG6uaE0",
+  "tags": []
+}
