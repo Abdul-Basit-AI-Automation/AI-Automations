@@ -1,0 +1,1355 @@
+{
+  "name": "Send Emails",
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        -176,
+        576
+      ],
+      "id": "892ad826-fb77-4c62-95ed-64587790ff3c",
+      "name": "When clicking ‘Execute workflow’"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Write an email for cold outreach\n\nyou use the tools \"Clients Data\" and \"Tavily\" to search for the person your are writing for..\n\nsign off as Abdul Basit",
+        "hasOutputParser": true,
+        "options": {
+          "systemMessage": "=##Role & Tone:\nYou are an outreach specialist for real estate automation services. You write short, highly personalized, research-driven cold emails that grab attention and spark curiosity. Your tone can adapt:\n\nProfessional & consultative (for agencies & brokerages that prefer formal tone).\n\nVanity-driven (for competitive agents/brokerages who care about status, speed, and being “top players”).\n\nShameless pitch (for no-nonsense prospects who respond to blunt, bold offers).\n\nAlways avoid pushy “spammy” words, keep it short, and feel like 1-to-1 outreach.\n\n##🎯 Target Audience (ICP):\n\nReal estate agencies, brokerages, investors, property management firms, or lead-gen agencies in U.S., Canada, U.K., and other English-speaking markets.\n\n### Pain Points To Call Out:\n\n10–20 hrs/week wasted on manual CRM updates & data entry.\n\nInconsistent lead flow (referrals/manual outreach).\n\nMissed follow-ups = lost deals.\n\nCRMs messy and under-utilized.\n\nSlow property research & valuations delaying closings.\n\n###✅ Desired Outcomes To Show:\n\nQualified leads → auto-delivered into CRM.\n\nClean CRM with zero missed follow-ups.\n\nFaster property research & valuations.\n\nSave 20+ hours/week per agent.\n\nScale revenue without extra staff.\n\n##📌 Core Offer:\n\n“I help real estate businesses automate lead generation and CRM tasks. To make this risk-free, I’ll run a 7-day demo system for you — no setup fee, just cover the basic subscription (if complex). If it generates leads and you like how it works, we can discuss a full tailored system.”\n\n##⚡ Email Writing Rules:\n\n###Subject line:\n\nAlways short, curiosity-driven, and slightly distress/FOMO-based.\n\nIf Vanity → compare to “top agencies” / “competitors scaling faster.”\n\nIf Shameless Pitch → blunt, bold (“You’re losing deals,” “Your CRM is a graveyard”).\n\n###Body Structure:\n\nPersonalized intro (use Clients Data + Tavily research → mention their city, team size, CRM, or market challenge).\n\nPain point → highlight lost hours, missed deals, or messy workflows (in their own words, as seen on Reddit/FB groups/YouTube comments).\n\nCompetitor / FOMO angle → show how others in their market are already scaling with automation.\n\n###What I Do (benefits list):\n\nAuto-capture & qualify leads → CRM.\n\nConsistent follow-ups (zero slip-through).\n\nAutomated property research & valuations.\n\n20+ hours saved weekly per agent.\n\n##How I Do It (system):\n\nBack-end automations using N8N + API integrations.\n\nFront-ends with Lovable + Bolt.\n\nSimple plug-and-play delivery.\n\n##Why Me (social proof):\n\nN8N Creator Program\n\nLinkedIn Premium member\n\n5k+ YouTube subscribers (automation case studies)\n\nGithub Creator\n\nSolved problems for multiple real estate agencies.\n\n##Soft CTA:\n\nDefault: “Would you like me to spin up a 7-day demo system for you?”\n\nVanity: “Want me to show you what your competitors are already testing?”\n\nShameless Pitch: “I’ll set it up, prove it works, then you decide.”\n\n👉 Always close with Book a Meeting link: https://calendly.com/abdulbasit-mcj-9046/ai-consultation\n\n🔀 Flex Mode (Tone Adaptation Examples):\n\nProfessional:\n“Noticed your team in [City] is expanding fast — congrats. Many agencies in your market spend 10–20 hrs/week on CRM updates and missed follow-ups. I help them fix this with automation…”\n\nVanity:\n“Top agencies in [City] don’t spend 10 hrs/week on CRM grunt work. They’ve already automated this. If you’re still doing it manually, you’re falling behind…”\n\nShameless Pitch:\n“Let me be blunt: your team is losing deals every week because of manual CRM tasks and missed follow-ups. I’ll build you a demo system in 7 days. If it doesn’t deliver leads, drop me.”\n\n###IMPORTANT RULE:\n\n-always mention WHY ME? this should be like Why Me?\n than make bullets for points...also mention my github repository https://github.com/Abdul-Basit-AI-Automation/AI-Automations\n\n-always mentoin What i do?\n\n-always mention How i do?\n\n-donot write big paragraphs put them into small lines, so they look a bit clean\n\n###Rules for Subject Lines:\n\nMust be under 8 words (short & scannable).\n\nUse distress/FOMO (lost deals, wasted hours, falling behind).\n\nMust feel personalized — can mention location, company, or role if data is available.\n\nAvoid spam triggers (free!!!, sign up now, guarantee, etc.).\n\nTone must adapt depending on outreach style.\n\nShould stand out from generic sales emails.\n\nOutput 10 variations at a time for A/B testing.\n\nExamples by Style:\n\nVanity:\n\n“Top Fayetteville agencies already automated this”\n\n“Why competitors in Arkansas scale faster”\n\nShameless Pitch:\n\n“You’re losing deals every week, Mike”\n\n“Your CRM is a graveyard of leads”"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2.2,
+      "position": [
+        32,
+        -160
+      ],
+      "id": "2048932b-1a84-4ba3-9295-04482aa4f1ba",
+      "name": "AI Agent",
+      "retryOnFail": false,
+      "alwaysOutputData": true,
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-4.1-mini"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        48,
+        128
+      ],
+      "id": "02a1b787-3546-4e55-85ca-979e6bf18703",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "nmb4CTzrGxFWF2WZ",
+          "name": "n8n free OpenAI API credits"
+        }
+      },
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "model": "openai/gpt-oss-120b",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGroq",
+      "typeVersion": 1,
+      "position": [
+        -64,
+        80
+      ],
+      "id": "4ad799dd-a084-4388-85e5-d8425ca1bdf4",
+      "name": "Groq Chat Model",
+      "credentials": {
+        "groqApi": {
+          "id": "IINmUB8TLxiIOxer",
+          "name": "Groq account"
+        }
+      },
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1cl6FFZQMHvue2Rbw5MhwMpCFmXzjxI0EgwTRw4jkznM",
+          "mode": "list",
+          "cachedResultName": "Clients Data to Outreach",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1cl6FFZQMHvue2Rbw5MhwMpCFmXzjxI0EgwTRw4jkznM/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1cl6FFZQMHvue2Rbw5MhwMpCFmXzjxI0EgwTRw4jkznM/edit#gid=0"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheetsTool",
+      "typeVersion": 4.7,
+      "position": [
+        160,
+        80
+      ],
+      "id": "1c2fbd79-c676-4a4c-b652-20ac1fa67601",
+      "name": "Clients Data",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "xMfUkMmeOR6SyS55",
+          "name": "Google Sheets account"
+        }
+      },
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "jsonSchemaExample": "{\n  \"to\": \"abdulbasit.mcj.9046@gmail.com\",\n  \"subject\": \"hello\",\n  \"text\": \"hello\"\n}\n"
+      },
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.3,
+      "position": [
+        464,
+        80
+      ],
+      "id": "99fd1762-bb81-429f-8c04-66e683d08979",
+      "name": "Structured Output Parser",
+      "notesInFlow": false,
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.tavily.com/search",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "Bearer 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"
+            }
+          ]
+        },
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "query",
+              "value": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('parameters0_Value', ``, 'string') }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequestTool",
+      "typeVersion": 4.2,
+      "position": [
+        256,
+        80
+      ],
+      "id": "264c0f8f-13f5-4852-8593-a1f5e359c3fb",
+      "name": "Tavily",
+      "disabled": true
+    },
+    {
+      "parameters": {},
+      "type": "@n8n/n8n-nodes-langchain.toolCalculator",
+      "typeVersion": 1,
+      "position": [
+        352,
+        80
+      ],
+      "id": "a089f660-eca5-49c5-9e20-8c345618836d",
+      "name": "Calculator",
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $json.output.to }}",
+        "subject": "={{ $json.output.subject }}",
+        "emailType": "text",
+        "message": "={{ $json.output.text }}",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        384,
+        -160
+      ],
+      "id": "390bac15-679d-4843-b591-0e2065a8ff15",
+      "name": "Send a message",
+      "webhookId": "86ef63de-410e-44de-af00-6914e2db1df5",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "YtvTkqgzpfmN4Uf8",
+          "name": "abdulbasit.mcj.9046"
+        }
+      },
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1cl6FFZQMHvue2Rbw5MhwMpCFmXzjxI0EgwTRw4jkznM",
+          "mode": "list",
+          "cachedResultName": "Clients Data to Outreach",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1cl6FFZQMHvue2Rbw5MhwMpCFmXzjxI0EgwTRw4jkznM/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1cl6FFZQMHvue2Rbw5MhwMpCFmXzjxI0EgwTRw4jkznM/edit#gid=0"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        96,
+        576
+      ],
+      "id": "c9243bdd-cc4c-4bbd-afb6-f8a053c7fefe",
+      "name": "Get row(s) in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "xMfUkMmeOR6SyS55",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "5bf3909d-29b3-49fd-8def-edb2a4423755",
+              "leftValue": "={{ $json.Status }}",
+              "rightValue": "SENT",
+              "operator": {
+                "type": "string",
+                "operation": "notEquals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        400,
+        576
+      ],
+      "id": "54f3c060-2a4b-442b-8ad7-179a65965ec3",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        736,
+        576
+      ],
+      "id": "3819dbb8-09ab-41f5-86b8-d8f1f5d493bb",
+      "name": "Loop Over Items"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Write an email for cold outreach\n\nthe data is as below:\n\nFirst Name:{{ $('If').item.json['First Name'] }}\nLast Name:{{ $('If').item.json['Last Name'] }}\nTitle:{{ $('If').item.json.Title }}\nCompany Name:{{ $('If').item.json['Company Name'] }}\nCompany Name for Emails: {{ $('If').item.json['Company Name for Emails'] }}\nEmail: {{ $('If').item.json.Email }}\nSeniority: {{ $('If').item.json.Seniority }}\nEmployees: {{ $('If').item.json['# Employees'] }}\nIndustry: {{ $('If').item.json.Industry }}\nKeywords: {{ $('If').item.json.Keywords }}\nWebsite: {{ $('If').item.json.Website }}\nCity: {{ $('If').item.json.City }}\nState:{{ $('If').item.json.State }}\nCountry: {{ $('If').item.json.Country }}\nCompany Address: {{ $('If').item.json['Company Address'] }}\nCompany city:{{ $('If').item.json['Company City'] }}\nCompany State: {{ $('If').item.json['Company State'] }}\nCompany Country:{{ $('If').item.json['Company Country'] }}\n\n\n\n\n\n",
+        "hasOutputParser": true,
+        "options": {
+          "systemMessage": "=##Role & Tone:\nYou are an outreach specialist for real estate automation services. You write short, highly personalized, research-driven cold emails that grab attention and spark curiosity. Your tone can adapt:\n\nProfessional & consultative (for agencies & brokerages that prefer formal tone).\n\nVanity-driven (for competitive agents/brokerages who care about status, speed, and being “top players”).\n\nShameless pitch (for no-nonsense prospects who respond to blunt, bold offers).\n\nAlways avoid pushy “spammy” words, keep it short, and feel like 1-to-1 outreach.\n\n##🎯 Target Audience (ICP):\n\nReal estate agencies, brokerages, investors, property management firms, or lead-gen agencies in U.S., Canada, U.K., and other English-speaking markets.\n\n### Pain Points To Call Out:\n\n10–20 hrs/week wasted on manual CRM updates & data entry.\n\nInconsistent lead flow (referrals/manual outreach).\n\nMissed follow-ups = lost deals.\n\nCRMs messy and under-utilized.\n\nSlow property research & valuations delaying closings.\n\n###✅ Desired Outcomes To Show:\n\nQualified leads → auto-delivered into CRM.\n\nClean CRM with zero missed follow-ups.\n\nFaster property research & valuations.\n\nSave 20+ hours/week per agent.\n\nScale revenue without extra staff.\n\n##📌 Core Offer:\n\n“I help real estate businesses automate lead generation and CRM tasks. To make this risk-free, I’ll run a 7-day demo system for you — no setup fee, just cover the basic subscription (if complex). If it generates leads and you like how it works, we can discuss a full tailored system.”\n\n##⚡ Email Writing Rules:\n\n###Subject line:\n\nAlways short, curiosity-driven, and slightly distress/FOMO-based.\n\nIf Vanity → compare to “top agencies” / “competitors scaling faster.”\n\nIf Shameless Pitch → blunt, bold (“You’re losing deals,” “Your CRM is a graveyard”).\n\n###Body Structure:\n\nPersonalized intro (use Clients Data + Tavily research → mention their city, team size, CRM, or market challenge).\n\nPain point → highlight lost hours, missed deals, or messy workflows (in their own words, as seen on Reddit/FB groups/YouTube comments).\n\nCompetitor / FOMO angle → show how others in their market are already scaling with automation.\n\n###What I Do (benefits list):\n\nAuto-capture & qualify leads → CRM.\n\nConsistent follow-ups (zero slip-through).\n\nAutomated property research & valuations.\n\n20+ hours saved weekly per agent.\n\n##How I Do It (system):\n\nBack-end automations using N8N + API integrations.\n\nFront-ends with Lovable + Bolt.\n\nSimple plug-and-play delivery.\n\n##Why Me (social proof):\n\nN8N Creator Program\n\nLinkedIn Premium member\n\n5k+ YouTube subscribers (automation case studies)\n\nGithub Creator\n\nSolved problems for multiple real estate agencies.\n\n##Soft CTA:\n\nDefault: “Would you like me to spin up a 7-day demo system for you?”\n\nVanity: “Want me to show you what your competitors are already testing?”\n\nShameless Pitch: “I’ll set it up, prove it works, then you decide.”\n\n👉 Always close with Book a Meeting link: https://calendly.com/abdulbasit-mcj-9046/ai-consultation\n\n🔀 Flex Mode (Tone Adaptation Examples):\n\nProfessional:\n“Noticed your team in [City] is expanding fast — congrats. Many agencies in your market spend 10–20 hrs/week on CRM updates and missed follow-ups. I help them fix this with automation…”\n\nVanity:\n“Top agencies in [City] don’t spend 10 hrs/week on CRM grunt work. They’ve already automated this. If you’re still doing it manually, you’re falling behind…”\n\nShameless Pitch:\n“Let me be blunt: your team is losing deals every week because of manual CRM tasks and missed follow-ups. I’ll build you a demo system in 7 days. If it doesn’t deliver leads, drop me.”\n\n###IMPORTANT RULE:\n\n-always mention WHY ME? this should be like Why Me?\n than make bullets for points...also mention my github repository https://github.com/Abdul-Basit-AI-Automation/AI-Automations\n\n-always mentoin What i do?\n\n-always mention How i do?\n\n-donot write big paragraphs put them into small lines, so they look a bit clean\n\n-always use \"Tavily\" to research about them\n\n###Rules for Subject Lines:\n\n-subject lines must be one of these only....use them according to the persons details...\n\n\"{{ $json['First Name'] }} your competitors are laughing at your manual work\"\n\n\"Top agents don’t waste time… why are you?\"\n\n\"You’re literally burning deals — automate before it’s too late\"\n\n\"High-performers are already ahead (you’re not on the list… yet)\"\n\n\"Manual workflows? That’s rookie stuff, {{ $json['First Name'] }}\"\n\n\"This trick makes average agents look elite\"\n\n\"Stop embarrassing yourself with outdated systems\"\n\n\"Your leads deserve better than spreadsheets\"\n\n\"The automation playbook smart agents won’t share\"\n\n\"Last chance to stop being the bottleneck in your business\""
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2.2,
+      "position": [
+        1120,
+        432
+      ],
+      "id": "8c4cd386-f128-4bd0-ab0f-a565f8db73f7",
+      "name": "AI Agent1",
+      "retryOnFail": false,
+      "alwaysOutputData": true
+    },
+    {
+      "parameters": {
+        "jsonSchemaExample": "{\n  \"to\": \"abdulbasit.mcj.9046@gmail.com\",\n  \"subject\": \"hello\",\n  \"text\": \"hello\"\n}\n"
+      },
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.3,
+      "position": [
+        1344,
+        704
+      ],
+      "id": "f1a27849-dece-47ec-8073-895b7bca0e88",
+      "name": "Structured Output Parser1",
+      "notesInFlow": false
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.tavily.com/search",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "Bearer "
+            }
+          ]
+        },
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "query",
+              "value": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('parameters0_Value', ``, 'string') }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequestTool",
+      "typeVersion": 4.2,
+      "position": [
+        1200,
+        704
+      ],
+      "id": "eb61c357-fc66-4ce6-9104-4875964be9c9",
+      "name": "Tavily1"
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $json.output.to }}",
+        "subject": "={{ $json.output.subject }}",
+        "emailType": "text",
+        "message": "={{ $json.output.text }}",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        1664,
+        560
+      ],
+      "id": "9fda7e87-09db-403c-92cc-8a00941c4227",
+      "name": "Send a message1",
+      "webhookId": "86ef63de-410e-44de-af00-6914e2db1df5",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "YtvTkqgzpfmN4Uf8",
+          "name": "abdulbasit.mcj.9046"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        1040,
+        688
+      ],
+      "id": "5d26ebc4-6bf2-41d1-8403-63c5127b899f",
+      "name": "Google Gemini Chat Model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "RHKSM7dW9bNVwvl6",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "appendOrUpdate",
+        "documentId": {
+          "__rl": true,
+          "value": "1cl6FFZQMHvue2Rbw5MhwMpCFmXzjxI0EgwTRw4jkznM",
+          "mode": "list",
+          "cachedResultName": "Clients Data to Outreach",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1cl6FFZQMHvue2Rbw5MhwMpCFmXzjxI0EgwTRw4jkznM/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1cl6FFZQMHvue2Rbw5MhwMpCFmXzjxI0EgwTRw4jkznM/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "First Name": "=",
+            "Status": "SENT",
+            "Email": "={{ $('If').item.json.Email }}"
+          },
+          "matchingColumns": [
+            "Email"
+          ],
+          "schema": [
+            {
+              "id": "First Name",
+              "displayName": "First Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Last Name",
+              "displayName": "Last Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Title",
+              "displayName": "Title",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Company Name",
+              "displayName": "Company Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Company Name for Emails",
+              "displayName": "Company Name for Emails",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Email",
+              "displayName": "Email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Email Status",
+              "displayName": "Email Status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Primary Email Source",
+              "displayName": "Primary Email Source",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Primary Email Verification Source",
+              "displayName": "Primary Email Verification Source",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Email Confidence",
+              "displayName": "Email Confidence",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Primary Email Catch-all Status",
+              "displayName": "Primary Email Catch-all Status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Primary Email Last Verified At",
+              "displayName": "Primary Email Last Verified At",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Seniority",
+              "displayName": "Seniority",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Departments",
+              "displayName": "Departments",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Contact Owner",
+              "displayName": "Contact Owner",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Work Direct Phone",
+              "displayName": "Work Direct Phone",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Home Phone",
+              "displayName": "Home Phone",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Mobile Phone",
+              "displayName": "Mobile Phone",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Corporate Phone",
+              "displayName": "Corporate Phone",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Other Phone",
+              "displayName": "Other Phone",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Stage",
+              "displayName": "Stage",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Lists",
+              "displayName": "Lists",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Last Contacted",
+              "displayName": "Last Contacted",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Account Owner",
+              "displayName": "Account Owner",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "# Employees",
+              "displayName": "# Employees",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Industry",
+              "displayName": "Industry",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Keywords",
+              "displayName": "Keywords",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Person Linkedin Url",
+              "displayName": "Person Linkedin Url",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Website",
+              "displayName": "Website",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Company Linkedin Url",
+              "displayName": "Company Linkedin Url",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Facebook Url",
+              "displayName": "Facebook Url",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Twitter Url",
+              "displayName": "Twitter Url",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "City",
+              "displayName": "City",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "State",
+              "displayName": "State",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Country",
+              "displayName": "Country",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Company Address",
+              "displayName": "Company Address",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Company City",
+              "displayName": "Company City",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Company State",
+              "displayName": "Company State",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Company Country",
+              "displayName": "Company Country",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Company Phone",
+              "displayName": "Company Phone",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Technologies",
+              "displayName": "Technologies",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Annual Revenue",
+              "displayName": "Annual Revenue",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Total Funding",
+              "displayName": "Total Funding",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Latest Funding",
+              "displayName": "Latest Funding",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Latest Funding Amount",
+              "displayName": "Latest Funding Amount",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Last Raised At",
+              "displayName": "Last Raised At",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Subsidiary of",
+              "displayName": "Subsidiary of",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Email Sent",
+              "displayName": "Email Sent",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Email Open",
+              "displayName": "Email Open",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Email Bounced",
+              "displayName": "Email Bounced",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Replied",
+              "displayName": "Replied",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Demoed",
+              "displayName": "Demoed",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Status",
+              "displayName": "Status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Apollo Contact Id",
+              "displayName": "Apollo Contact Id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Apollo Account Id",
+              "displayName": "Apollo Account Id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Secondary Email",
+              "displayName": "Secondary Email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Secondary Email Source",
+              "displayName": "Secondary Email Source",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Secondary Email Status",
+              "displayName": "Secondary Email Status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Secondary Email Verification Source",
+              "displayName": "Secondary Email Verification Source",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Tertiary Email",
+              "displayName": "Tertiary Email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Tertiary Email Source",
+              "displayName": "Tertiary Email Source",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Tertiary Email Status",
+              "displayName": "Tertiary Email Status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Tertiary Email Verification Source",
+              "displayName": "Tertiary Email Verification Source",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        1184,
+        144
+      ],
+      "id": "61b69449-060e-4b56-bb9d-c7a4ebca2593",
+      "name": "Append or update row in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "xMfUkMmeOR6SyS55",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "amount": 60
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        1968,
+        560
+      ],
+      "id": "f33ca787-fe32-41a0-8a2e-870f6c26e017",
+      "name": "Wait",
+      "webhookId": "28322fca-d0c8-45b0-b617-b25a69d574a3"
+    },
+    {
+      "parameters": {
+        "content": "## Input the Data",
+        "height": 192
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        16,
+        528
+      ],
+      "typeVersion": 1,
+      "id": "cdd62a68-548e-4631-8b77-6563185a83f4",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "content": "## Condition",
+        "height": 192,
+        "color": 2
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        336,
+        528
+      ],
+      "typeVersion": 1,
+      "id": "41b5b4f2-3f74-40ec-b2d2-416ef3b8de62",
+      "name": "Sticky Note1"
+    },
+    {
+      "parameters": {
+        "content": "## Loop initiate",
+        "height": 192,
+        "color": 3
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        672,
+        528
+      ],
+      "typeVersion": 1,
+      "id": "3649e903-a493-46f6-a745-307ca7fad09f",
+      "name": "Sticky Note2"
+    },
+    {
+      "parameters": {
+        "content": "## Make an Email",
+        "height": 544,
+        "width": 496,
+        "color": 5
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        992,
+        384
+      ],
+      "typeVersion": 1,
+      "id": "25c7710b-81a0-4207-87aa-6d288ad36ed8",
+      "name": "Sticky Note3"
+    },
+    {
+      "parameters": {
+        "content": "## Send the Email",
+        "height": 256,
+        "color": 6
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        1600,
+        464
+      ],
+      "typeVersion": 1,
+      "id": "6c7b41d8-da2d-4932-ac23-6555b7f36bd5",
+      "name": "Sticky Note4"
+    },
+    {
+      "parameters": {
+        "content": "## Update CRM",
+        "height": 192,
+        "color": 4
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        1120,
+        96
+      ],
+      "typeVersion": 1,
+      "id": "9c40e0e0-759d-4057-adf9-6a3b419f1c32",
+      "name": "Sticky Note5"
+    },
+    {
+      "parameters": {
+        "content": "## Avoid SPAM FOLDER!",
+        "height": 256,
+        "color": 6
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        1904,
+        464
+      ],
+      "typeVersion": 1,
+      "id": "d3b4a927-925b-43ba-b717-b6c0b8bff0ce",
+      "name": "Sticky Note6"
+    },
+    {
+      "parameters": {
+        "content": "## Made this thing before",
+        "height": 704,
+        "width": 720
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -96,
+        -272
+      ],
+      "typeVersion": 1,
+      "id": "7ec440a8-274e-4da3-b609-f354c430f499",
+      "name": "Sticky Note7"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When clicking ‘Execute workflow’": {
+      "main": [
+        [
+          {
+            "node": "Get row(s) in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Groq Chat Model": {
+      "ai_languageModel": [
+        []
+      ]
+    },
+    "Clients Data": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Structured Output Parser": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Tavily": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Calculator": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Send a message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send a message": {
+      "main": [
+        []
+      ]
+    },
+    "Get row(s) in sheet": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items": {
+      "main": [
+        [
+          {
+            "node": "Append or update row in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "AI Agent1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent1": {
+      "main": [
+        [
+          {
+            "node": "Send a message1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Structured Output Parser1": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "AI Agent1",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Tavily1": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent1",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent1",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send a message1": {
+      "main": [
+        [
+          {
+            "node": "Wait",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "12b28d26-0c1e-4653-9ada-524634f46bab",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "1212c406c26670d3fe43d357cefcbd80a6d6a88a7666fca6cff8698a1afa461c"
+  },
+  "id": "7E3I9epFzQl9h4c7",
+  "tags": []
+}
