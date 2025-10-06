@@ -1,0 +1,309 @@
+{
+  "name": "INSTITUTION WORK",
+  "nodes": [
+    {
+      "parameters": {
+        "formTitle": "PMA 157 Long Course ",
+        "formFields": {
+          "values": [
+            {
+              "fieldLabel": "Upload the Registration Slip",
+              "fieldType": "file",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Name",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "College Number",
+              "fieldType": "number",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "CNIC",
+              "fieldType": "number",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Father Name",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Date of Initial",
+              "fieldType": "date",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Fee",
+              "fieldType": "dropdown",
+              "fieldOptions": {
+                "values": [
+                  {
+                    "option": "Paid"
+                  },
+                  {
+                    "option": "Pending"
+                  }
+                ]
+              },
+              "requiredField": true
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.formTrigger",
+      "typeVersion": 2.3,
+      "position": [
+        144,
+        16
+      ],
+      "id": "baa3820c-34a7-4b5b-932f-686cfdf01044",
+      "name": "On form submission",
+      "webhookId": "15e32735-5edf-4d08-921b-352fefb484e2",
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "inputDataFieldName": "file",
+        "name": "={{ $json.body.name }}{{ $json.body.college_number }}",
+        "driveId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "My Drive"
+        },
+        "folderId": {
+          "__rl": true,
+          "value": "1WoL2eD8jWgE2YXHb8uN3L1I57pfZocWN",
+          "mode": "list",
+          "cachedResultName": "PMA 157 REG SLIP",
+          "cachedResultUrl": "https://drive.google.com/drive/folders/1WoL2eD8jWgE2YXHb8uN3L1I57pfZocWN"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        128,
+        -128
+      ],
+      "id": "acf5eefe-b857-4fce-872b-5c782506bf4b",
+      "name": "Upload file",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "dtDuRDI16u8KuGEN",
+          "name": "Google Drive account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "appendOrUpdate",
+        "documentId": {
+          "__rl": true,
+          "value": "1H9FGr1nj2ohvdL-WAUbErZtvnLwdJ7f4kv7ngMl3GP0",
+          "mode": "list",
+          "cachedResultName": "PMA 157 LC",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1H9FGr1nj2ohvdL-WAUbErZtvnLwdJ7f4kv7ngMl3GP0/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1H9FGr1nj2ohvdL-WAUbErZtvnLwdJ7f4kv7ngMl3GP0/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "College No.": "={{ $json.body.college_number }}",
+            "Name": "={{ $json.body.name }}",
+            "Father Name": "={{ $json.body.father_name }}",
+            "CNIC": "={{ $json.body.cnic }}",
+            "Date of Intial": "={{ $json.body.date_of_initial }}",
+            "Status Fee": "={{ $json.body.fee_status }}",
+            "Registration Slip": "={{ $json.webViewLink }}"
+          },
+          "matchingColumns": [
+            "CNIC"
+          ],
+          "schema": [
+            {
+              "id": "College No.",
+              "displayName": "College No.",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Name",
+              "displayName": "Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Father Name",
+              "displayName": "Father Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "CNIC",
+              "displayName": "CNIC",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Date of Intial",
+              "displayName": "Date of Intial",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Status Fee",
+              "displayName": "Status Fee",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Registration Slip",
+              "displayName": "Registration Slip",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        416,
+        96
+      ],
+      "id": "3bac15eb-b28c-4827-8c72-8e2823e40704",
+      "name": "Append or update row in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "xMfUkMmeOR6SyS55",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "mode": "combine",
+        "combineBy": "combineByPosition",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        352,
+        -160
+      ],
+      "id": "5d9831a7-30ab-4425-8e1c-81f3971f793a",
+      "name": "Merge"
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "86ecaf99-5055-4cfb-951d-ff2eb7d7d0f0",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        96,
+        -336
+      ],
+      "id": "d5148d51-355a-4667-99b8-9b5df0c81a22",
+      "name": "Webhook",
+      "webhookId": "86ecaf99-5055-4cfb-951d-ff2eb7d7d0f0"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "On form submission": {
+      "main": [
+        []
+      ]
+    },
+    "Upload file": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge": {
+      "main": [
+        [
+          {
+            "node": "Append or update row in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Upload file",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "9733fb76-a59c-49bd-9493-d6e890a324cb",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "1212c406c26670d3fe43d357cefcbd80a6d6a88a7666fca6cff8698a1afa461c"
+  },
+  "id": "jnWryDQnQGbXkfzv",
+  "tags": []
+}
